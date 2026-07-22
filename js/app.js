@@ -95,8 +95,9 @@ window.App = (function(){
   /* ================= ESTANTE DE JOGOS ================= */
   const JOGOS = [
     { id:"perfil", nome:"Perfil", emoji:"🕵️", desc:"Adivinhe a personalidade pelas dicas. Vermelho contra Azul, primeiro a fazer 50 pontos vence!", pronto:true },
-    { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde primeiro pontua.", pronto:false },
-    { id:"mimica", nome:"Mímica", emoji:"🎭", desc:"Sorteia a palavra, corre o tempo, o time adivinha.", pronto:false }
+    { id:"palpite", nome:"Palpite", emoji:"🎯", desc:"Pergunta numérica, cada um chuta. O palpite mais próximo leva os pontos!", pronto:false },
+    { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todo mundo sabe o lugar secreto, menos um. Descubram quem é o espião!", pronto:false },
+    { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo primeiro pontua mais.", pronto:false }
   ];
 
   function telaEstante(){
