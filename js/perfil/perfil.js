@@ -177,7 +177,7 @@ window.Perfil = (function(){
     comecar.addEventListener("click",()=>{
       lg={nomes:[j1.value.trim()||"Jogador 1", j2.value.trim()||"Jogador 2"],
           pontos:[0,0],cartas:[0,0],meta:Math.max(10,Math.min(200,parseInt(meta.value,10)||50)),
-          vez:0,carta:null,dica:0,usadas:[]};
+          vez:0,carta:null,dica:0,usadas:[],trocas:[5,5]};
       localPassagem();
     });
     tela(el("div",{},
@@ -208,7 +208,7 @@ window.Perfil = (function(){
       placarDupla(lg.vez),
       el("div",{class:"card passagem"},
         el("div",{class:"seta"},"↓"), el("h2",{},"Vez de "+quem),
-        el("p",{}, "Entregue o celular para "+leitor+" — ele lê as dicas. "+quem+", não olhe a tela."),
+        el("p",{}, "Entregue o celular para "+leitor+", que vai ler as dicas. "+quem+", não olhe a tela."),
         abrir),
       el("div",{class:"acoes"}, el("button",{class:"btn-ghost",onclick:()=>{ if(confirm("Encerrar a partida?")){paraRel();menu();} }},"Encerrar partida"))
     ));
@@ -225,7 +225,7 @@ window.Perfil = (function(){
         return el("li",{class:"pista "+(aberta?"aberta":"trancada")+(i===lg.dica?" atual":"")},
           el("span",{class:"v"},String(10-i)), el("span",{class:"t"}, t));
       }));
-      btnProx.textContent = lg.dica>=9?"Ninguém acertou — encerrar":"Próxima dica";
+      btnProx.textContent = lg.dica>=9?"Ninguém acertou, encerrar":"Próxima dica";
       valBox.textContent=String(10-lg.dica);
     }
     function avanca(){ if(lg.dica>=9){ localReveal(0); return; } lg.dica++; repinta(); iniciaRel();
@@ -233,8 +233,17 @@ window.Perfil = (function(){
     btnProx.addEventListener("click",avanca);
     const acertou=el("button",{class:"btn btn-mint larga"},"Acertou");
     acertou.addEventListener("click",()=>localReveal(10-lg.dica));
-    const pular=el("button",{class:"btn-ghost larga",style:"width:100%"},"Já conhece essa carta — trocar");
-    pular.addEventListener("click",()=>{ lg.usadas.push(lg.carta); lg.carta=sorteia(lg.usadas); lg.dica=0; repinta(); iniciaRel(); window.scrollTo({top:0,behavior:"smooth"}); });
+    if(!lg.trocas) lg.trocas=[5,5];
+    const restaT=lg.trocas[lg.vez];
+    const pular=el("button",{class:"btn-ghost larga",style:"width:100%"},
+      restaT>0?("Trocar carta ("+restaT+(restaT===1?" troca restante":" trocas restantes")+")"):"Sem trocas restantes");
+    pular.disabled=restaT<=0;
+    pular.addEventListener("click",()=>{
+      if(lg.trocas[lg.vez]<=0) return;
+      lg.trocas[lg.vez]--;
+      lg.usadas.push(lg.carta); lg.carta=sorteia(lg.usadas); lg.dica=0;
+      localCarta(false); window.scrollTo({top:0,behavior:"smooth"});
+    });
 
     const valBox=el("strong",{},String(10-lg.dica));
     tela(el("div",{},
@@ -357,7 +366,8 @@ window.Perfil = (function(){
       host:eu().id, phase:"lobby", meta:50,
       members:{ [eu().id]:{nick:eu().nick, avatar:eu().avatar, team:(Math.random()<0.5?"A":"B")} },
       order:[eu().id], turn:"A", readerId:null, lastReader:{A:null,B:null},
-      card:null, dica:0, dicaT:null, scores:{A:0,B:0}, cartas:{A:0,B:0}, used:[], last:null
+      card:null, dica:0, dicaT:null, scores:{A:0,B:0}, cartas:{A:0,B:0},
+      trocas:{A:5,B:5}, used:[], last:null
     };
     try{
       await Net().criarSala(code, st);
@@ -543,24 +553,33 @@ window.Perfil = (function(){
     let papel;
     if(vez.solo){
       // DUELO: um contra o outro
-      if(leitor) papel="Você lê as dicas pra "+vez.nick+". Cara de paisagem — não entrega nada! 😏";
+      if(leitor) papel="Você lê as dicas pra "+vez.nick+". Cara de paisagem, não entrega nada! 😏";
       else if(adivinho) papel="Sua vez! "+nomeLeitor+" lê as dicas. Mostra que você sabe! 😤";
       else papel=vez.nick+" está adivinhando. Sem cochicho! 🤫";
     } else {
       // GRUPO vs GRUPO
       if(leitor) papel="Você recebeu a carta! Leia a dica em voz alta pro seu time.";
       else if(adivinho) papel=nomeLeitor+" recebeu a carta. Adivinhem juntos!";
-      else papel="Time "+timeVez+" está adivinhando. Fiquem de olho — e bico calado! 🤫";
+      else papel="Time "+timeVez+" está adivinhando. Fiquem de olho e bico calado! 🤫";
     }
 
     let controles;
     if(leitor){
-      const prox=el("button",{class:"btn btn-linha larga"}, estado.dica>=9?(vez.solo?"Não acertou — encerrar":"Ninguém acertou — encerrar"):"Próxima dica");
+      const prox=el("button",{class:"btn btn-linha larga"}, estado.dica>=9?(vez.solo?"Não acertou, encerrar":"Ninguém acertou, encerrar"):"Próxima dica");
       prox.addEventListener("click",()=>{ if(estado.dica>=9) return encerraOnline(0); mutar(s=>{ s.dica=Math.min(9,s.dica+1); s.dicaT=Date.now(); return s; }); });
       const acertou=el("button",{class:"btn btn-mint larga"},(vez.solo?vez.nick:"Time "+timeVez)+" acertou!");
       acertou.addEventListener("click",()=>encerraOnline(10-estado.dica));
-      const pular=el("button",{class:"btn-ghost larga",style:"width:100%"},"Trocar carta");
-      pular.addEventListener("click",()=>mutar(s=>{ s.used.push(s.card); s.card=sorteia(s.used); s.dica=0; s.dicaT=Date.now(); return s; }));
+      const restaT=(estado.trocas&&estado.trocas[estado.turn]!=null)?estado.trocas[estado.turn]:5;
+      const pular=el("button",{class:"btn-ghost larga",style:"width:100%"},
+        restaT>0?("Trocar carta ("+restaT+(restaT===1?" troca restante":" trocas restantes")+")"):"Sem trocas restantes");
+      pular.disabled=restaT<=0;
+      pular.addEventListener("click",()=>mutar(s=>{
+        if(!s.trocas) s.trocas={A:5,B:5};
+        if(s.trocas[s.turn]<=0) return s;
+        s.trocas[s.turn]--;
+        s.used.push(s.card); s.card=sorteia(s.used); s.dica=0; s.dicaT=Date.now();
+        return s;
+      }));
       controles=el("div",{class:"controles"}, el("p",{class:"aviso",style:"margin-bottom:2px"}, papel), acertou, prox, pular);
     } else {
       controles=el("p",{class:"aviso"}, papel);
@@ -599,7 +618,7 @@ window.Perfil = (function(){
   /* ---------------- REVELAÇÃO / FIM ---------------- */
   function revealOnline(){
     paraRel();
-    const L=estado.last||{team:"A",name:"—",pts:0,dica:0};
+    const L=estado.last||{team:"A",name:"?",pts:0,dica:0};
     // se o time só tem 1 pessoa, fala o nome dela (duelo); senão, o time
     const ids=membrosDe(estado, L.team);
     const quem = ids.length===1 && estado.members[ids[0]] ? estado.members[ids[0]].nick : "Time "+TIMES[L.team].nome;
@@ -633,7 +652,7 @@ window.Perfil = (function(){
     const rev=el("button",{class:"btn"},"Revanche");
     rev.disabled=!souHost();
     if(souHost()) rev.addEventListener("click",()=>mutar(s=>{
-      s.scores={A:0,B:0}; s.cartas={A:0,B:0}; s.turn="A"; s.phase="card";
+      s.scores={A:0,B:0}; s.cartas={A:0,B:0}; s.trocas={A:5,B:5}; s.turn="A"; s.phase="card";
       s.card=sorteia(s.used); s.dica=0; s.dicaT=Date.now(); s.readerId=sorteiaLeitor(s,"A"); s.last=null; return s;
     }));
     tela(el("div",{},
