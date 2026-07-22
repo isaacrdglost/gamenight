@@ -51,9 +51,12 @@ innerHTML com dado do usuário — sempre `esc()`.
 
 - Backend: **Supabase**. Uma tabela `rooms (code, state jsonb, updated_at)`. Todo o estado da partida
   vive no JSON `state`. Realtime via `postgres_changes` (UPDATE) filtrando pelo `code`.
-- **Modelo leitor**: a cada carta, o app escolhe um leitor do time que NÃO está adivinhando. Só a tela
-  do leitor mostra a resposta; todos os outros veem as pistas se abrindo, uma a uma, em tempo real.
-  O leitor toca "próxima dica" (valor cai de 10 a 1) e "acertou". O host toca "próxima carta".
+- **Modelo leitor (regra atual)**: a cada carta, o app SORTEIA alguém do PRÓPRIO time que vai
+  adivinhar para "receber a carta". Só a tela dessa pessoa mostra a resposta; ela lê as dicas em voz
+  alta para o próprio time. Todos veem as 10 pistas desde o início (embaçadas), abrindo uma a uma em
+  tempo real. O leitor toca "próxima dica" (valor cai de 10 a 1) e "acertou". O host toca "próxima
+  carta". Exceção: time com 1 pessoa só → o leitor sai do time adversário. Cada dica tem 1 minuto num
+  relógio compartilhado (timestamp `dicaT` no state).
 - **Times**: ao entrar na sala, o jogador é **sorteado** para o time menor (empate = moeda). O host pode
   "Embaralhar times" no lobby antes de começar. Vermelho = time A, Azul = time B.
 - O baralho está embutido em todo cliente; pela rede só trafega o **índice** da carta + quem é o leitor.
@@ -75,14 +78,13 @@ innerHTML com dado do usuário — sempre `esc()`.
 
 ## 4. Direção de DESIGN (não vira "vibe coding")
 
-Tema: **dossiê / ficha de investigação** — combina com "Perfil" (identificar alguém pelas pistas).
-Regras que devem ser mantidas em qualquer tela nova:
-- **Sem degradê decorativo e sem glow/neon.** Cores chapadas, hairlines de 1px, sombras suaves e baixas.
-- Paleta (tokens em `:root` no `styles.css`): papel `#E7E2D6`, cartão `#FBF9F4`, tinta `#1D1A15`,
-  secundário `#726A5B`, **Time Vermelho `#C8452C`**, **Time Azul `#2C5C86`**, ouro (valor/pontos) `#C98A12`,
-  verde (acerto) `#2C7A52`. As cores dos times têm significado — não use vermelho/azul pra outra coisa.
-- Tipografia: **Bricolage Grotesque** (display, números grandes), **Inter** (corpo), **Space Mono**
-  (código da sala, rótulos, valores). Mantenha esse contraste display/mono como assinatura.
+Tema: **festa estilo Gartic** — colorido, cartunesco, divertido. Regras para qualquer tela nova:
+- Fundo roxo profundo (`--fundo #221B45`), cartões brancos arredondados, botões com "empurrão 3D"
+  (box-shadow 0 5px 0 na cor escura + translateY no :active).
+- Paleta (tokens em `:root` no `styles.css`): **Time Vermelho `#FF5252`**, **Time Azul `#38A3FF`**,
+  botão principal `#4D6DF3`, ouro (valor/pontos) `#FFC94D`, verde (acerto) `#35C66F`.
+  As cores dos times têm significado — não use vermelho/azul pra outra coisa.
+- Tipografia: **Fredoka** (títulos, números grandes, botões), **Nunito** (corpo, pesos 700+).
 - Pistas travadas aparecem **desfocadas** (blur) como "informação classificada" e são liberadas em ordem.
   Esse é o elemento-assinatura do jogo; preserve a metáfora.
 - Piso de qualidade: responsivo até o mobile, foco de teclado visível, `prefers-reduced-motion` respeitado,

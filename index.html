@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Salão de Jogos</title>
+<meta name="description" content="Salão de jogos de grupo: comece pelo Perfil. Placar de mesa, 1v1 local ou online em times.">
+<meta name="theme-color" content="#221B45">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icone.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jogos">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap"><div id="app"></div></div>
+
+<!-- supabase-js (só é usado se o config.js tiver as chaves) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="js/avatars.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/perfil/deck.js"></script>
+<script src="js/perfil/perfil.js"></script>
+<script src="js/app.js"></script>
+<script>App.iniciar();</script>
+</body>
+</html>

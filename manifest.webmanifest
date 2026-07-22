@@ -1,0 +1,9 @@
+{
+  "name": "Salão de Jogos",
+  "short_name": "Jogos",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#221B45",
+  "theme_color": "#221B45",
+  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
