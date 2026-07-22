@@ -47,6 +47,10 @@ window.Net = (function(){
     }
     throw new Error("sala-cheia-de-gente-tenta-de-novo");
   }
+  // apaga a sala (usado quando o último jogador sai; a faxina do banco cobre o resto)
+  async function apagarSala(code){
+    try{ await sb.from("rooms").delete().eq("code", code); }catch(e){}
+  }
   function inscrever(code, cb){
     const canal = sb.channel("room:"+code)
       .on("postgres_changes",
@@ -56,5 +60,5 @@ window.Net = (function(){
     return () => { try{ sb.removeChannel(canal); }catch(e){} };
   }
 
-  return { disponivel, criarSala, lerSala, escreverSala, alterar, inscrever };
+  return { disponivel, criarSala, lerSala, escreverSala, alterar, apagarSala, inscrever };
 })();

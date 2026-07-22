@@ -404,14 +404,20 @@ window.Perfil = (function(){
     paraRel();
     if(desinscrever){ desinscrever(); desinscrever=null; }
     ctx.guardar("perfil:sala",null);
-    if(sala) Net().alterar(sala.code, s=>{
-      if(s.members[eu().id]){ delete s.members[eu().id]; s.order=s.order.filter(i=>i!==eu().id); }
-      // host saiu? passa a coroa pro próximo
-      if(s.host===eu().id && s.order.length) s.host=s.order[0];
-      // quem tinha a carta saiu? sorteia outro
-      if(s.readerId===eu().id && s.phase==="card") s.readerId=sorteiaLeitor(s, s.turn);
-      return s;
-    }).catch(()=>{});
+    if(sala){
+      const code=sala.code;
+      Net().alterar(code, s=>{
+        if(s.members[eu().id]){ delete s.members[eu().id]; s.order=s.order.filter(i=>i!==eu().id); }
+        // host saiu? passa a coroa pro próximo
+        if(s.host===eu().id && s.order.length) s.host=s.order[0];
+        // quem tinha a carta saiu? sorteia outro
+        if(s.readerId===eu().id && s.phase==="card") s.readerId=sorteiaLeitor(s, s.turn);
+        return s;
+      }).then(s=>{
+        // último a sair apaga a luz: sala vazia some do banco
+        if(s && (!s.order || !s.order.length)) Net().apagarSala(code);
+      }).catch(()=>{});
+    }
     sala=null; estado=null; menu();
   }
   async function mutar(f){
