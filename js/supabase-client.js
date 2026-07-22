@@ -24,16 +24,28 @@ window.Net = (function(){
     const { error } = await sb.from("rooms").update({ state, updated_at: new Date().toISOString() }).eq("code", code);
     if(error) throw error;
   }
-  // lê, aplica f(state)->novoState e grava. Uma tentativa de retry em caso de corrida.
+  // lê, aplica f(state)->novoState e grava COM TRAVA OTIMISTA:
+  // a escrita só vale se ninguém escreveu depois da nossa leitura (updated_at igual).
+  // Se alguém passou na frente, relê e tenta de novo (até 6x, com espera aleatória).
+  // Isso aguenta 10+ pessoas entrando na sala no mesmo segundo sem perder ninguém.
   async function alterar(code, f){
-    for(let i=0;i<2;i++){
-      const atual = await lerSala(code);
-      if(!atual) throw new Error("sala-sumiu");
-      const novo = f(JSON.parse(JSON.stringify(atual)));
-      if(!novo) return atual;
-      try{ await escreverSala(code, novo); return novo; }
-      catch(e){ if(i===1) throw e; }
+    for(let i=0;i<6;i++){
+      const { data: row, error: e1 } = await sb.from("rooms").select("state,updated_at").eq("code", code).maybeSingle();
+      if(e1) throw e1;
+      if(!row) throw new Error("sala-sumiu");
+      const novo = f(JSON.parse(JSON.stringify(row.state)));
+      if(!novo) return row.state;
+      // timestamp com microssegundos aleatórios: nunca há dois iguais
+      const ts = new Date().toISOString().replace("Z", String(Math.floor(Math.random()*1000)).padStart(3,"0")+"Z");
+      const { data: gravou, error: e2 } = await sb.from("rooms")
+        .update({ state: novo, updated_at: ts })
+        .eq("code", code).eq("updated_at", row.updated_at)
+        .select("code");
+      if(e2){ if(i===5) throw e2; }
+      else if(gravou && gravou.length) return novo; // conseguiu, ninguém atropelou
+      await new Promise(r=>setTimeout(r, 50 + Math.random()*200*(i+1)));
     }
+    throw new Error("sala-cheia-de-gente-tenta-de-novo");
   }
   function inscrever(code, cb){
     const canal = sb.channel("room:"+code)

@@ -96,7 +96,13 @@ window.App = (function(){
   const JOGOS = [
     { id:"perfil", nome:"Perfil", emoji:"🕵️", desc:"Adivinhe a personalidade pelas dicas. Vermelho contra Azul, primeiro a fazer 50 pontos vence!", pronto:true },
     { id:"palpite", nome:"Palpite", emoji:"🎯", desc:"Pergunta numérica, cada um chuta. O palpite mais próximo leva os pontos!", pronto:false },
+    { id:"impostor", nome:"Impostor", emoji:"🎭", desc:"Todo mundo recebe a mesma palavra, menos o impostor. Dê pistas sem se entregar!", pronto:false },
+    { id:"maisprovavel", nome:"Mais Provável", emoji:"👥", desc:"Quem do grupo é mais provável de...? Vote e pontue se acertar a escolha da galera!", pronto:false },
+    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Categoria na tela, 10 segundos pra responder sem repetir. Último vivo vence!", pronto:false },
     { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todo mundo sabe o lugar secreto, menos um. Descubram quem é o espião!", pronto:false },
+    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme ou música só com emojis. Quem adivinhar primeiro pontua mais!", pronto:false },
+    { id:"verdademito", nome:"Verdade ou Mito", emoji:"🤔", desc:"Afirmação bizarra na tela, vote em 15 segundos. Sequência de acertos vale combo!", pronto:false },
+    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens do mais caro ao mais barato. Cada posição certa vale ponto!", pronto:false },
     { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo primeiro pontua mais.", pronto:false }
   ];
 
