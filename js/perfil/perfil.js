@@ -262,25 +262,29 @@ window.Perfil = (function(){
     lg.vez=1-lg.vez;
     const cont=el("button",{class:"btn"}, acabou?"Ver resultado":"Próxima carta");
     cont.addEventListener("click",()=> acabou?localFim():localPassagem());
-    tela(el("div",{class:"card revelacao"},
-      el("div",{class:"eyebrow"}, pontos>0?("Acertou na dica de "+(10-lg.dica)+" pontos"):"Passou as 10 dicas"),
-      el("div",{class:"nome-final"}, c.n),
-      el("div",{class:"pts"+(pontos>0?"":" zero")}, pontos>0?("+"+pontos):"0"),
-      el("div",{class:"detalhe"}, lg.nomes[quem]+" agora tem "+lg.pontos[quem]+" de "+lg.meta),
-      cont
-    ));
+    tela(el("div",{},
+      pontos>0?confetes(50):"",
+      el("div",{class:"card revelacao"},
+        el("div",{class:"eyebrow"}, pontos>0?("Acertou na dica de "+(10-lg.dica)+" pontos"):"Passou as 10 dicas"),
+        el("div",{class:"nome-final"}, c.n),
+        el("div",{class:"pts"+(pontos>0?"":" zero")}, pontos>0?("+"+pontos):"0"),
+        el("div",{class:"detalhe"}, lg.nomes[quem]+" agora tem "+lg.pontos[quem]+" de "+lg.meta),
+        cont
+    )));
   }
   function localFim(){
     const venc=lg.pontos[0]>lg.pontos[1]?0:1;
     const rev=el("button",{class:"btn"},"Revanche");
     rev.addEventListener("click",()=>{ lg.pontos=[0,0];lg.cartas=[0,0];lg.vez=0; localPassagem(); });
-    tela(el("div",{class:"card fim"},
-      el("div",{class:"trofeu"},"🏆"), el("div",{class:"eyebrow"},"Fim de partida"),
-      el("h2",{}, lg.nomes[venc]+" venceu"),
-      el("div",{class:"linha"}, `${lg.nomes[0]} ${lg.pontos[0]} × ${lg.pontos[1]} ${lg.nomes[1]}`),
-      el("div",{style:"margin-top:34px"}, rev),
-      el("div",{class:"acoes"}, el("button",{class:"btn-ghost",onclick:menu},"Voltar"))
-    ));
+    tela(el("div",{},
+      confetes(100),
+      el("div",{class:"card fim"},
+        el("div",{class:"trofeu"},"🏆"), el("div",{class:"eyebrow"},"Fim de partida"),
+        el("h2",{}, lg.nomes[venc]+" venceu"),
+        el("div",{class:"linha"}, `${lg.nomes[0]} ${lg.pontos[0]} × ${lg.pontos[1]} ${lg.nomes[1]}`),
+        el("div",{style:"margin-top:34px"}, rev),
+        el("div",{class:"acoes"}, el("button",{class:"btn-ghost",onclick:menu},"Voltar"))
+    )));
   }
 
   /* ====================================================================
@@ -418,6 +422,35 @@ window.Perfil = (function(){
   }
   function avatarMini(id){ const a=ctx.avatarPorId(id); return el("div",{class:"av",html:a.svg}); }
 
+  /* ---------------- FESTINHA (confete + banner de vez) ---------------- */
+  function confetes(qtd){
+    const cores=["#FF5252","#38A3FF","#FFC94D","#35C66F","#C9A7FF","#FFFFFF"];
+    const box=el("div",{class:"confetes","aria-hidden":"true"});
+    for(let i=0;i<qtd;i++){
+      box.appendChild(el("i",{style:
+        "left:"+(Math.random()*100)+"%;background:"+cores[i%cores.length]+
+        ";animation-delay:"+(Math.random()*.9).toFixed(2)+"s"+
+        ";animation-duration:"+(2.2+Math.random()*1.8).toFixed(2)+"s"+
+        ";width:"+(7+Math.random()*7).toFixed(0)+"px"}));
+    }
+    return box;
+  }
+  // se o time que adivinha tem 1 pessoa só, o jogo vira duelo → copy diferente
+  function infoVez(s){
+    const ids=membrosDe(s, s.turn);
+    const solo=ids.length===1;
+    const nick=solo && s.members[ids[0]] ? s.members[ids[0]].nick : null;
+    return { solo, nick, rotulo: solo ? nick : "Time "+TIMES[s.turn].nome };
+  }
+  let bannerVisto=null; // garante que o banner só aparece quando muda a carta/vez
+  // banner fica no <body> pra sobreviver às re-renderizações da tela
+  function mostraBanner(txt, cls){
+    document.querySelectorAll(".banner-vez").forEach(b=>b.remove());
+    const b=el("div",{class:"banner-vez "+cls,"aria-hidden":"true"}, txt);
+    document.body.appendChild(b);
+    setTimeout(()=>{ b.remove(); }, 1900);
+  }
+
   /* ---------------- LOBBY ---------------- */
   function lobby(){
     paraRel();
@@ -486,6 +519,15 @@ window.Perfil = (function(){
     const nomeLeitor=estado.members[estado.readerId]?estado.members[estado.readerId].nick:"alguém";
     const timeVez=TIMES[estado.turn].nome;
     const adivinho = meuTime()===estado.turn && !leitor;
+    const vez=infoVez(estado); // vez.solo = duelo (1 pessoa adivinhando)
+
+    // banner "vez de..." só quando muda a carta ou o turno
+    const chaveBanner = estado.card+":"+estado.turn;
+    const novaCarta = bannerVisto!==chaveBanner;
+    if(novaCarta){
+      bannerVisto=chaveBanner;
+      mostraBanner("Vez "+(vez.solo?("de "+vez.nick):("do Time "+timeVez))+"!", TIMES[estado.turn].cls);
+    }
 
     relBox=el("div",{class:"relogio"}); relTxt=el("span"); relBar=el("i");
     relBox.append(relTxt, el("span",{class:"bar"}, relBar));
@@ -499,29 +541,37 @@ window.Perfil = (function(){
     });
 
     let papel;
-    if(leitor) papel="Você recebeu a carta! Leia a dica em voz alta pro seu time.";
-    else if(adivinho) papel=nomeLeitor+" recebeu a carta. Adivinhem juntos!";
-    else papel="Time "+timeVez+" está adivinhando. Fiquem de olho — e bico calado! 🤫";
+    if(vez.solo){
+      // DUELO: um contra o outro
+      if(leitor) papel="Você lê as dicas pra "+vez.nick+". Cara de paisagem — não entrega nada! 😏";
+      else if(adivinho) papel="Sua vez! "+nomeLeitor+" lê as dicas. Mostra que você sabe! 😤";
+      else papel=vez.nick+" está adivinhando. Sem cochicho! 🤫";
+    } else {
+      // GRUPO vs GRUPO
+      if(leitor) papel="Você recebeu a carta! Leia a dica em voz alta pro seu time.";
+      else if(adivinho) papel=nomeLeitor+" recebeu a carta. Adivinhem juntos!";
+      else papel="Time "+timeVez+" está adivinhando. Fiquem de olho — e bico calado! 🤫";
+    }
 
     let controles;
     if(leitor){
-      const prox=el("button",{class:"btn btn-linha larga"}, estado.dica>=9?"Ninguém acertou — encerrar":"Próxima dica");
+      const prox=el("button",{class:"btn btn-linha larga"}, estado.dica>=9?(vez.solo?"Não acertou — encerrar":"Ninguém acertou — encerrar"):"Próxima dica");
       prox.addEventListener("click",()=>{ if(estado.dica>=9) return encerraOnline(0); mutar(s=>{ s.dica=Math.min(9,s.dica+1); s.dicaT=Date.now(); return s; }); });
-      const acertou=el("button",{class:"btn btn-mint larga"},"Time "+timeVez+" acertou!");
+      const acertou=el("button",{class:"btn btn-mint larga"},(vez.solo?vez.nick:"Time "+timeVez)+" acertou!");
       acertou.addEventListener("click",()=>encerraOnline(10-estado.dica));
       const pular=el("button",{class:"btn-ghost larga",style:"width:100%"},"Trocar carta");
       pular.addEventListener("click",()=>mutar(s=>{ s.used.push(s.card); s.card=sorteia(s.used); s.dica=0; s.dicaT=Date.now(); return s; }));
-      controles=el("div",{class:"controles"}, acertou, prox, pular);
+      controles=el("div",{class:"controles"}, el("p",{class:"aviso",style:"margin-bottom:2px"}, papel), acertou, prox, pular);
     } else {
       controles=el("p",{class:"aviso"}, papel);
     }
 
     tela(el("div",{},
       placarTimes(),
-      el("div",{class:"carta"},
+      el("div",{class:"carta"+(novaCarta?" nova":"")},
         el("div",{class:"carta-topo"},
           el("div",{}, el("div",{class:"cat"},"Personalidade · "+c.c),
-            el("div",{style:"font-size:13px;color:var(--suave);margin-top:8px;font-weight:700"}, leitor?("Time "+timeVez+" adivinha · você lê"):papel)),
+            el("div",{style:"font-size:13px;color:var(--suave);margin-top:8px;font-weight:700"}, leitor?(vez.rotulo+" adivinha · você lê"):papel)),
           el("div",{class:"valor"}, el("span",{},"Vale agora"), el("strong",{}, String(10-estado.dica)))),
         leitor?el("div",{class:"resposta"}, el("span",{},"Só você vê a resposta"), el("strong",{}, c.n)):"",
         relBox, pistas),
@@ -550,7 +600,9 @@ window.Perfil = (function(){
   function revealOnline(){
     paraRel();
     const L=estado.last||{team:"A",name:"—",pts:0,dica:0};
-    const timeL=TIMES[L.team].nome;
+    // se o time só tem 1 pessoa, fala o nome dela (duelo); senão, o time
+    const ids=membrosDe(estado, L.team);
+    const quem = ids.length===1 && estado.members[ids[0]] ? estado.members[ids[0]].nick : "Time "+TIMES[L.team].nome;
     const cont=el("button",{class:"btn"},"Próxima carta");
     if(souHost()){
       cont.addEventListener("click",()=>mutar(s=>{
@@ -561,9 +613,10 @@ window.Perfil = (function(){
       }));
     } else { cont.disabled=true; cont.textContent="Esperando o host…"; }
     tela(el("div",{},
+      L.pts>0?confetes(60):"",
       placarTimes(),
       el("div",{class:"card revelacao"},
-        el("div",{class:"eyebrow"}, L.pts>0?("Time "+timeL+" acertou na dica de "+(10-L.dica)+" pontos"):("Time "+timeL+" passou as 10 dicas")),
+        el("div",{class:"eyebrow"}, L.pts>0?(quem+" acertou na dica de "+(10-L.dica)+" pontos"):(quem+" passou as 10 dicas")),
         el("div",{class:"nome-final"}, L.name),
         el("div",{class:"pts"+(L.pts>0?"":" zero")}, L.pts>0?("+"+L.pts):"0"),
         el("div",{class:"detalhe"}, "Vermelho "+estado.scores.A+" × "+estado.scores.B+" Azul"),
@@ -575,6 +628,8 @@ window.Perfil = (function(){
   function fimOnline(){
     paraRel();
     const venc=estado.scores.A>estado.scores.B?"A":"B";
+    const ids=membrosDe(estado, venc);
+    const quem = ids.length===1 && estado.members[ids[0]] ? estado.members[ids[0]].nick : "Time "+TIMES[venc].nome;
     const rev=el("button",{class:"btn"},"Revanche");
     rev.disabled=!souHost();
     if(souHost()) rev.addEventListener("click",()=>mutar(s=>{
@@ -582,10 +637,11 @@ window.Perfil = (function(){
       s.card=sorteia(s.used); s.dica=0; s.dicaT=Date.now(); s.readerId=sorteiaLeitor(s,"A"); s.last=null; return s;
     }));
     tela(el("div",{},
+      confetes(120),
       placarTimes(),
       el("div",{class:"card fim"},
         el("div",{class:"trofeu"},"🏆"), el("div",{class:"eyebrow"},"Fim de partida"),
-        el("h2",{}, "Time "+TIMES[venc].nome+" venceu!"),
+        el("h2",{class:venc==="A"?"venc-a":"venc-b"}, quem+" venceu!"),
         el("div",{class:"linha"}, "Vermelho "+estado.scores.A+" × "+estado.scores.B+" Azul"),
         el("div",{style:"margin-top:34px"}, rev),
         el("div",{class:"acoes"}, el("button",{class:"btn-ghost",onclick:sairOnline},"Sair da sala"))
