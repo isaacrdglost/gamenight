@@ -43,7 +43,16 @@ window.Batata = (function(){
     "Órgãos do corpo","Doenças comuns","Remédios",
     "Coisas de farmácia","Materiais escolares","Cores de cabelo",
     "Signos","Planetas e astros","Fenômenos da natureza",
-    "Coisas do inverno","Coisas do verão"
+    "Coisas do inverno","Coisas do verão","Palavras que ninguém usa mais",
+    "Coisas que existiam nos anos 90","Coisas que dão medo","Coisas que grudam",
+    "Coisas que fazem barulho de noite","Coisas que ninguém devolve emprestado","Desculpas pra faltar",
+    "Coisas que só a vó tem","Coisas que somem em casa","Coisas caras que não valem a pena",
+    "Motivos pra brigar em grupo de família","Coisas que a gente finge que entende","Coisas que quebram fácil",
+    "Coisas que ninguém lê","Coisas que dão sono","Coisas que a gente guarda e nunca usa",
+    "Coisas que só funcionam batendo","Nomes de wifi engraçados","Coisas que ninguém admite fazer",
+    "Perguntas de tia em festa","Coisas que a gente compra e esquece","Marcas que já foram famosas",
+    "Coisas que cheiram bem","Coisas que a gente perde na praia"
+  
   ];
   const TURNO_S = (window.BATATA_TURNO_S || 16);
 

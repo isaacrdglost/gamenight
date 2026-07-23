@@ -7,7 +7,7 @@ window.Quiz = (function(){
 
   const def = {
     id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", min:2,
-    metaLabel:"rodadas", metaPadrao:10, metaMin:5, metaMax:20, tempoResposta:15, total:90,
+    metaLabel:"rodadas", metaPadrao:10, metaMin:5, metaMax:20, tempoResposta:15, total:110,
     rapidas:["Essa foi fácil! 😎","Errei feio.","Foi por pouco!"],
     comoJogar:"Uma pergunta com 4 opções. Acertou vale 2 pontos, e quem acerta mais rápido leva bônus de velocidade. Quem tem mais pontos no fim vence!",
 

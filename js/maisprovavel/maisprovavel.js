@@ -42,13 +42,22 @@ window.MaisProvavel = (function(){
     "fazer piada em hora errada","chegar em casa e deitar de roupa","comprar comida demais no delivery",
     "dormir com a TV ligada","encontrar conhecido em outra cidade","dar nome pro carro",
     "achar que o time vai ganhar sempre","chorar de saudade da infância","fazer teste de personalidade e acreditar",
-    "virar o motorista da rua"
+    "virar o motorista da rua","chamar a professora de mãe","responder 'você também' pro garçom que desejou bom apetite",
+    "acenar pra alguém que não era pra você","falar sozinho e ser pego","cair da própria cadeira",
+    "esquecer o próprio aniversário","confundir sal com açúcar","levar tombo em lugar cheio",
+    "mandar áudio pro grupo errado","curtir foto antiga sem querer","chorar por causa de propaganda de banco",
+    "achar que ouviu o nome sendo chamado","errar o nome do próprio namorado","confundir gêmeos e insistir no erro",
+    "sair de casa com dois sapatos diferentes","brigar com objeto que não funciona","falar 'alô' pro portão eletrônico",
+    "tentar abrir a porta com o controle do carro","ficar bravo com personagem de série","narrar o que está fazendo",
+    "dar bom dia pra planta","esquecer o nome de quem te cumprimentou","sorrir em foto ruim de propósito",
+    "responder pergunta que não era pra você","levar o carregador errado na viagem"
+  
   ];
   const sorteia = window.Multi._util.sorteiaIdx;
 
   const def = {
     id:"maisprovavel", nome:"Mais Provável", emoji:"👥", min:3,
-    metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:25, total:124,
+    metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:25, total:149,
     rapidas:["Óbvio que é essa pessoa.","Injustiça pura! 😤","Tô até ofendido."],
     comoJogar:"Aparece um 'quem é mais provável de...?'. Cada um vota numa pessoa da sala. Quem votar na pessoa mais escolhida pela galera ganha 2 pontos!",
 
