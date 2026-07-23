@@ -6,6 +6,8 @@ window.Perfil = (function(){
   }catch(e){ BARALHO=[]; }
 
   function tela(node){ raiz().replaceChildren(node); window.scrollTo({top:0}); }
+  let somGate=null;
+  function som(nome, chave){ if(somGate!==chave){ somGate=chave; if(window.FX && window.FX.toca) window.FX.toca(nome); } }
   function cabec(titulo, onVoltar, extra){
     return el("header",{class:"compacto"},
       el("div",{}, el("div",{class:"eyebrow"},"Perfil"), el("h1",{}, titulo)),
@@ -262,6 +264,7 @@ window.Perfil = (function(){
   }
   function localReveal(pontos){
     paraRel();
+    if(window.FX && window.FX.toca) window.FX.toca(pontos>0?"chime":"erro");
     const c=BARALHO[lg.carta], quem=lg.vez;
     lg.usadas.push(lg.carta);
     lg.pontos[quem]+=pontos; lg.cartas[quem]++;
@@ -282,6 +285,7 @@ window.Perfil = (function(){
     )));
   }
   function localFim(){
+    if(window.FX && window.FX.toca) window.FX.toca("fanfarra");
     const venc=lg.pontos[0]>lg.pontos[1]?0:1;
     const rev=el("button",{class:"btn"},"Revanche");
     rev.addEventListener("click",()=>{ lg.pontos=[0,0];lg.cartas=[0,0];lg.vez=0; localPassagem(); });
@@ -636,6 +640,7 @@ window.Perfil = (function(){
   function revealOnline(){
     paraRel();
     const L=estado.last||{team:"A",name:"?",pts:0,dica:0};
+    som(L.pts>0?"chime":"erro", "rev"+L.name+estado.scores.A+"-"+estado.scores.B);
     // se o time só tem 1 pessoa, fala o nome dela (duelo); senão, o time
     const ids=membrosDe(estado, L.team);
     const quem = ids.length===1 && estado.members[ids[0]] ? estado.members[ids[0]].nick : "Time "+TIMES[L.team].nome;
@@ -663,6 +668,7 @@ window.Perfil = (function(){
 
   function fimOnline(){
     paraRel();
+    som("fanfarra","over");
     const venc=estado.scores.A>estado.scores.B?"A":"B";
     const ids=membrosDe(estado, venc);
     const quem = ids.length===1 && estado.members[ids[0]] ? estado.members[ids[0]].nick : "Time "+TIMES[venc].nome;

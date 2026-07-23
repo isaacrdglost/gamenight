@@ -34,6 +34,8 @@ window.Deducao = (function(){
   function avatarMini(id){ const a=ctx.avatarPorId(id); return el("div",{class:"av",html:a.svg}); }
   const souHost = () => estado && estado.host===eu().id;
   function jogadores(){ return estado.order.filter(id=>estado.players[id]).map(id=>Object.assign({id}, estado.players[id])); }
+  let somGate=null;
+  function som(nome, chave){ if(somGate!==chave){ somGate=chave; if(window.FX && window.FX.toca) window.FX.toca(nome); } }
 
   /* ---------------- rede ---------------- */
   const chaveSala = () => "sala:"+def.id;
@@ -174,6 +176,7 @@ window.Deducao = (function(){
 
   /* ---------------- fase PAPEL (ver seu segredo) ---------------- */
   function fasePapel(){
+    som("pop","p"+estado.round);
     const papel=def.meuPapel(estado, eu().id);
     const prontos=Object.keys(estado.prontos).length, total=estado.order.length;
     const jaPronto=!!estado.prontos[eu().id];
@@ -268,6 +271,7 @@ window.Deducao = (function(){
 
   /* ---------------- REVELAÇÃO ---------------- */
   function faseReveal(){
+    som("chime","r"+estado.round);
     const r=estado.reveal, alvo=estado.players[r.alvoId];
     const fim=estado.round>=estado.meta;
     const wrap=el("div",{});
@@ -307,6 +311,7 @@ window.Deducao = (function(){
 
   /* ---------------- FIM ---------------- */
   function faseOver(){
+    som("fanfarra","over");
     const js=jogadores().sort((a,b)=>b.score-a.score);
     const topo=js.length?js[0].score:0;
     const campeoes=js.filter(p=>p.score===topo);

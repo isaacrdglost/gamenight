@@ -31,6 +31,9 @@ window.Multi = (function(){
   function avatarMini(id){ const a=ctx.avatarPorId(id); return el("div",{class:"av",html:a.svg}); }
   const souHost = () => estado && estado.host===eu().id;
   function jogadores(){ return estado.order.filter(id=>estado.players[id]).map(id=>Object.assign({id}, estado.players[id])); }
+  // efeitos "normais" de partida, tocados uma vez por evento
+  let somGate=null;
+  function som(nome, chave){ if(somGate!==chave){ somGate=chave; if(window.FX && window.FX.toca) window.FX.toca(nome); } }
   function sorteiaIdx(usadas, tam){
     let livres=[]; for(let i=0;i<tam;i++) if(!usadas.includes(i)) livres.push(i);
     if(!livres.length){ usadas.length=0; for(let i=0;i<tam;i++) livres.push(i); }
@@ -262,6 +265,7 @@ window.Multi = (function(){
     return el("div",{id:"rodape-pergunta"}, ...filhos);
   }
   function fasePergunta(){
+    som("pop","p"+estado.round);
     const meio=def.renderPergunta(fazApi());
     tela(el("div",{},
       barraEsgoto(),
@@ -277,6 +281,7 @@ window.Multi = (function(){
   /* ---------------- rodada: resultado ---------------- */
   function faseReveal(){
     paraRel();
+    som("chime","r"+estado.round);
     const fim = estado.round>=estado.meta;
     const meio=def.renderReveal(fazApi());
     const cont=el("button",{class:"btn"}, fim?"Ver resultado 🏆":"Próxima rodada");
@@ -303,6 +308,7 @@ window.Multi = (function(){
   /* ---------------- fim ---------------- */
   function faseOver(){
     paraRel();
+    som("fanfarra","over");
     const js=jogadores().sort((a,b)=>b.score-a.score);
     const topo=js.length?js[0].score:0;
     const campeoes=js.filter(p=>p.score===topo);

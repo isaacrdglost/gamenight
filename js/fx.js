@@ -70,7 +70,26 @@ window.FX = (function(){
       o.connect(g); g.connect(a.destination); o.start(st); o.stop(st+.17);
     });
   }
-  const SONS = { airhorn, rimshot, trombone, ding, erro };
+  /* -------- sons "normais" de partida (discretos, pra dar dinâmica) -------- */
+  function pop(a){ // nova rodada / pergunta aparece
+    const t=a.currentTime,o=a.createOscillator(),g=a.createGain();
+    o.type="sine"; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(920,t+.08);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+.16);
+    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t+.18);
+  }
+  function chime(a){ // revelação
+    const t=a.currentTime;
+    [659,988].forEach((f,i)=>{ const o=a.createOscillator(),g=a.createGain(); o.type="sine"; o.frequency.value=f; const st=t+i*.1;
+      g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.22,st+.01); g.gain.exponentialRampToValueAtTime(.0001,st+.4);
+      o.connect(g); g.connect(a.destination); o.start(st); o.stop(st+.42); });
+  }
+  function fanfarra(a){ // vitória
+    const t=a.currentTime, notes=[523,659,784,1047];
+    notes.forEach((f,i)=>{ const st=t+i*.12, o=a.createOscillator(), g=a.createGain(); o.type="triangle"; o.frequency.value=f; const ultimo=i===notes.length-1;
+      g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.3,st+.02); g.gain.exponentialRampToValueAtTime(.0001,st+(ultimo?.6:.18));
+      o.connect(g); g.connect(a.destination); o.start(st); o.stop(st+.7); });
+  }
+  const SONS = { airhorn, rimshot, trombone, ding, erro, pop, chime, fanfarra };
   function toca(nome){ if(mudo) return; const a=ctx(); if(!a) return; try{ (SONS[nome]||(()=>{}))(a); }catch(e){} }
 
   /* -------- botõezinhos na lateral -------- */

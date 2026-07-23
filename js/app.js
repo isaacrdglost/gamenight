@@ -93,27 +93,32 @@ window.App = (function(){
   }
 
   /* ================= ESTANTE DE JOGOS ================= */
+  // tags de modo: "dupla" (1v1), "grupo" (times/3+), "individual" (todos contra todos)
   const JOGOS = [
-    { id:"perfil", nome:"Perfil", emoji:"🕵️", desc:"Adivinhe a personalidade pelas dicas. Vermelho contra Azul!", pronto:true },
-    { id:"palpite", nome:"Palpite", emoji:"🎯", desc:"Pergunta numérica, cada um chuta. O mais próximo pontua!", pronto:true },
-    { id:"maisprovavel", nome:"Mais Provável", emoji:"👥", desc:"Quem do grupo é mais provável de...? Vote na galera!", pronto:true },
-    { id:"verdademito", nome:"Verdade ou Mito", emoji:"🤔", desc:"Afirmação bizarra, vote em 15s. Combo por sequência!", pronto:true },
-    { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo e rápido pontua!", pronto:true },
-    { id:"impostor", nome:"Impostor", emoji:"🎭", desc:"Todos recebem a mesma palavra, menos o impostor.", pronto:true },
-    { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todos sabem o lugar secreto, menos um.", pronto:true },
-    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:true },
-    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:false },
-    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:false }
+    { id:"perfil", nome:"Perfil", emoji:"🕵️", desc:"Adivinhe a personalidade pelas dicas. Vermelho contra Azul!", pronto:true, tags:["dupla","grupo"] },
+    { id:"palpite", nome:"Palpite", emoji:"🎯", desc:"Pergunta numérica, cada um chuta. O mais próximo pontua!", pronto:true, tags:["dupla","grupo","individual"] },
+    { id:"maisprovavel", nome:"Mais Provável", emoji:"👥", desc:"Quem do grupo é mais provável de...? Vote na galera!", pronto:true, tags:["grupo"] },
+    { id:"verdademito", nome:"Verdade ou Mito", emoji:"🤔", desc:"Afirmação bizarra, vote em 15s. Combo por sequência!", pronto:true, tags:["dupla","grupo","individual"] },
+    { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo e rápido pontua!", pronto:true, tags:["dupla","grupo","individual"] },
+    { id:"impostor", nome:"Impostor", emoji:"🎭", desc:"Todos recebem a mesma palavra, menos o impostor.", pronto:true, tags:["grupo"] },
+    { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todos sabem o lugar secreto, menos um.", pronto:true, tags:["grupo"] },
+    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:true, tags:["dupla","grupo","individual"] },
+    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:true, tags:["grupo"] },
+    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:false, tags:["grupo"] }
   ];
+  const TAGS = { individual:{t:"Individual",e:"👤"}, dupla:{t:"Dupla",e:"👥"}, grupo:{t:"Grupo",e:"👨‍👩‍👧"} };
 
   function telaEstante(){
     const a = avatarPorId(perfil.avatar);
     const lista = el("div",{class:"galeria"});
     JOGOS.forEach(j=>{
+      const badges = el("div",{class:"tags"}, ...(j.tags||[]).map(k=>
+        el("span",{class:"tag tag-"+k, title:TAGS[k].t}, TAGS[k].e+" "+TAGS[k].t)));
       const card = el("button",{class:"jcard"+(j.pronto?"":" soon"), type:"button", title:j.desc},
         el("div",{class:"jemoji"}, j.emoji),
         el("h2",{}, j.nome),
         el("p",{}, j.desc),
+        badges,
         el("span",{class:"selo"}, j.pronto?"Jogar":"Em breve")
       );
       if(j.pronto) card.addEventListener("click",()=>abrirJogo(j.id));
@@ -121,7 +126,7 @@ window.App = (function(){
     });
 
     raiz().replaceChildren(
-      el("header",{class:"compacto"},
+      el("header",{class:"compacto larga"},
         el("div",{class:"saudacao"},
           el("div",{class:"av",html:a.svg}),
           el("div",{}, el("div",{class:"eyebrow"},"Olá"), el("h1",{style:"font-size:26px"}, perfil.nick))
@@ -129,7 +134,7 @@ window.App = (function(){
         el("button",{class:"btn-ghost", onclick:()=>telaHome(false)},"Editar")
       ),
       el("div",{}, el("div",{class:"eyebrow",style:"margin-bottom:8px"},"Escolha um jogo"), lista),
-      el("footer",{html:'Salão de Jogos · mais jogos entram na galeria em breve.'})
+      el("footer",{class:"larga",html:'Salão de Jogos · mais jogos entram na galeria em breve.'})
     );
   }
 
@@ -138,7 +143,7 @@ window.App = (function(){
     perfil: ()=>window.Perfil, palpite: ()=>window.Palpite,
     maisprovavel: ()=>window.MaisProvavel, verdademito: ()=>window.VerdadeMito,
     quiz: ()=>window.Quiz, impostor: ()=>window.Impostor, espiao: ()=>window.Espiao,
-    ordem: ()=>window.Ordem
+    ordem: ()=>window.Ordem, emoji: ()=>window.EmojiJogo
   };
   function abrirJogo(id, joinCode){
     const mod = MODULOS[id] && MODULOS[id]();
