@@ -6,7 +6,7 @@ window.Impostor = (function(){
 
   const def = {
     id:"impostor", nome:"Impostor", emoji:"🎭", min:3,
-    metaPadrao:5, metaMin:3, metaMax:12, total:22,
+    metaPadrao:5, metaMin:3, metaMax:12, total:66,
     rapidas:["Não fui eu, juro. 😇","Essa dica tá suspeita.","Tô de olho em você."],
     textoAlvo:"impostor", papelCaption:"Sua palavra secreta",
     comoJogar:"Todo mundo recebe a mesma palavra, menos o impostor, que recebe uma parecida. Cada um dá uma dica em voz alta sobre a sua palavra. Depois, votem em quem vocês acham que é o impostor!",

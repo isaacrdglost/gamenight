@@ -5,15 +5,47 @@
    ==================================================================== */
 window.Batata = (function(){
   const CATS = [
-    "Marcas de carro","Frutas","Times de futebol","Nomes de cachorro","Coisas de praia",
-    "Comidas de festa junina","Animais do zoológico","Profissões","Países","Capitais do mundo",
-    "Cores","Filmes da Disney","Super-heróis","Coisas de cozinha","Matérias da escola",
-    "Cantores brasileiros","Coisas que tem no banheiro","Marcas de refrigerante","Instrumentos musicais",
-    "Esportes","Sabores de pizza","Sabores de sorvete","Ferramentas","Coisas de bebê",
-    "Aplicativos de celular","Jogos de videogame","Personagens de desenho","Coisas de escritório",
-    "Bichos de jardim","Comidas de rodízio"
+    "Marcas de carro","Frutas","Times de futebol",
+    "Nomes de cachorro","Coisas de praia","Comidas de festa junina",
+    "Animais do zoológico","Profissões","Países",
+    "Capitais do mundo","Cores","Filmes da Disney",
+    "Super-heróis","Coisas de cozinha","Matérias da escola",
+    "Cantores brasileiros","Coisas que tem no banheiro","Marcas de refrigerante",
+    "Instrumentos musicais","Esportes","Sabores de pizza",
+    "Sabores de sorvete","Ferramentas","Coisas de bebê",
+    "Aplicativos de celular","Jogos de videogame","Personagens de desenho",
+    "Coisas de escritório","Bichos de jardim","Comidas de rodízio",
+    "Marcas de tênis","Marcas de celular","Redes sociais",
+    "Coisas que voam","Coisas que flutuam","Animais da fazenda",
+    "Animais do mar","Insetos","Aves",
+    "Raças de cachorro","Raças de gato","Estados brasileiros",
+    "Cidades do Brasil","Bairros famosos","Rios",
+    "Praias brasileiras","Verduras","Legumes",
+    "Temperos","Doces de festa","Comidas japonesas",
+    "Comidas italianas","Bebidas geladas","Marcas de cerveja",
+    "Frutas vermelhas","Queijos","Tipos de pão",
+    "Coisas do quarto","Coisas da sala","Coisas do carro",
+    "Coisas da escola","Coisas de academia","Peças de roupa",
+    "Acessórios","Tipos de calçado","Cortes de cabelo",
+    "Marcas de roupa","Novelas","Séries",
+    "Filmes de terror","Filmes de comédia","Desenhos antigos",
+    "Personagens da Marvel","Personagens da DC","Personagens de novela",
+    "Apresentadores de TV","Programas de TV","Bandas de rock",
+    "Cantores sertanejos","Funkeiros","Músicas de carnaval",
+    "Ritmos musicais","Times de basquete","Jogadores de futebol",
+    "Seleções de futebol","Modalidades olímpicas","Marcas de chocolate",
+    "Marcas de biscoito","Salgados de festa","Comidas de padaria",
+    "Coisas que gelam","Coisas quentes","Coisas redondas",
+    "Coisas que fazem barulho","Palavras com 3 letras","Nomes de menina",
+    "Nomes de menino","Sobrenomes comuns","Profissões de risco",
+    "Lugares para viajar","Meios de transporte","Coisas de camping",
+    "Objetos de cozinha","Utensílios de limpeza","Partes do corpo",
+    "Órgãos do corpo","Doenças comuns","Remédios",
+    "Coisas de farmácia","Materiais escolares","Cores de cabelo",
+    "Signos","Planetas e astros","Fenômenos da natureza",
+    "Coisas do inverno","Coisas do verão"
   ];
-  const TURNO_S = (window.BATATA_TURNO_S || 10);
+  const TURNO_S = (window.BATATA_TURNO_S || 16);
 
   let ctx, el, esc, raiz;
   let sala=null, estado=null, desinscrever=null;

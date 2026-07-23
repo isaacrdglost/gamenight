@@ -14,13 +14,41 @@ window.MaisProvavel = (function(){
     "se perder mesmo usando o GPS","rir na hora errada","dar o melhor conselho amoroso",
     "virar chef de cozinha","esquecer o nome de alguém na hora de apresentar","abraçar todo mundo quando bebe",
     "começar mil hobbies e não terminar nenhum","ser o mais dramático do grupo","acordar cedo no fim de semana à toa",
-    "mandar mensagem pra ex de madrugada"
+    "mandar mensagem pra ex de madrugada","furar fila sem perceber","discutir com atendente de telemarketing",
+    "chorar de rir sozinho no celular","esquecer a comida no fogo","comprar planta e deixar morrer",
+    "virar vegetariano por uma semana","postar indireta nas redes","dormir no cinema",
+    "perder o voo por dormir demais","cantar no chuveiro alto demais","dar spoiler sem querer",
+    "comprar coisa inútil na madrugada","levar bolo e achar graça","fazer amizade com o cachorro antes do dono",
+    "esquecer o guarda-chuva em todo lugar","falar mal do trânsito todo dia","virar a noite jogando",
+    "sumir do grupo por meses","responder áudio de 5 minutos com 'kkk'","tirar print de conversa",
+    "ser o primeiro a chegar na festa","reclamar do preço e comprar mesmo assim","chorar em propaganda",
+    "dar carona pra todo mundo","levar comida escondida pro cinema","dormir em qualquer lugar",
+    "perder as chaves dentro de casa","esquecer aniversário de namoro","comprar ingresso e não ir",
+    "fazer promessa de ano novo e desistir em janeiro","brigar por causa de série","comer no escuro pra ninguém ver",
+    "ligar por engano pro chefe","achar que sabe cantar","fazer dieta e desistir no almoço",
+    "virar influencer sem querer","chegar de última hora e resolver tudo","gastar em jogo de celular",
+    "organizar viagem que nunca acontece","perder a paciência no trânsito","achar defeito em restaurante caro",
+    "fazer todo mundo rir sem tentar","esquecer de responder e-mail importante","ficar amigo do garçom",
+    "filmar tudo em vez de curtir","dar conselho e não seguir","assumir a playlist da festa",
+    "comprar roupa e nunca usar","atrasar e culpar o trânsito","adotar sotaque de outro lugar em uma semana",
+    "ser o primeiro a dormir na viagem","esquecer nome de quem acabou de conhecer","virar fã de algo do nada",
+    "comer sobremesa antes do almoço","ficar sem bateria no pior momento","reclamar do frio o inverno inteiro",
+    "chorar vendo vídeo de bicho","prometer academia e não ir","achar que a comida está sempre sem sal",
+    "dar risada nervosa em situação séria","perder documento importante","fazer maratona de compras online",
+    "virar especialista em assunto aleatório","adiar tudo pra segunda-feira","fazer amizade em fila de banheiro",
+    "reclamar de filme e assistir até o fim","acordar com fome de madrugada","gastar meia hora escolhendo o que assistir",
+    "cantar música errada com confiança","esquecer onde guardou algo importante","virar o rei do churrasco",
+    "levar a sério jogo de tabuleiro","sumir na hora de dividir a conta","perder aposta boba",
+    "fazer piada em hora errada","chegar em casa e deitar de roupa","comprar comida demais no delivery",
+    "dormir com a TV ligada","encontrar conhecido em outra cidade","dar nome pro carro",
+    "achar que o time vai ganhar sempre","chorar de saudade da infância","fazer teste de personalidade e acreditar",
+    "virar o motorista da rua"
   ];
   const sorteia = window.Multi._util.sorteiaIdx;
 
   const def = {
     id:"maisprovavel", nome:"Mais Provável", emoji:"👥", min:3,
-    metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:25, total:40,
+    metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:25, total:124,
     rapidas:["Óbvio que é essa pessoa.","Injustiça pura! 😤","Tô até ofendido."],
     comoJogar:"Aparece um 'quem é mais provável de...?'. Cada um vota numa pessoa da sala. Quem votar na pessoa mais escolhida pela galera ganha 2 pontos!",
 

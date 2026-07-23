@@ -6,7 +6,7 @@ window.VerdadeMito = (function(){
 
   const def = {
     id:"verdademito", nome:"Verdade ou Mito", emoji:"🤔", min:2,
-    metaLabel:"rodadas", metaPadrao:10, metaMin:5, metaMax:20, tempoResposta:15, total:28,
+    metaLabel:"rodadas", metaPadrao:10, metaMin:5, metaMax:20, tempoResposta:15, total:84,
     rapidas:["Isso é mito, certeza.","Jurava que era verdade!","Chutei e deu certo. 😅"],
     comoJogar:"Uma afirmação bizarra aparece. Todo mundo vota Verdade ou Mito em 15 segundos. Cada acerto vale ponto, e acertos seguidos viram combo de até 3!",
 

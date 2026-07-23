@@ -73,6 +73,26 @@ window.Perfil = (function(){
     ));
   }
 
+  /* ---------- pistas em sanfona ----------
+     Só a dica da vez fica aberta. As já liberadas recolhem numa linha e
+     voltam a abrir com um toque. Assim a carta inteira cabe na tela e os
+     botões ficam sempre à mão. */
+  function montaPistas(textos, dicaAtual){
+    const ol=el("ol",{class:"pistas"});
+    textos.forEach((t,i)=>{
+      const aberta=i<=dicaAtual, atual=i===dicaAtual;
+      const li=el("li",{class:"pista "+(aberta?"aberta":"trancada")+(atual?" atual":"")+(aberta&&!atual?" recolhida":"")},
+        el("span",{class:"v"},String(10-i)), el("span",{class:"t"}, t));
+      if(aberta && !atual){
+        li.setAttribute("role","button");
+        li.setAttribute("title","Toque para abrir de novo");
+        li.addEventListener("click",()=>li.classList.toggle("recolhida"));
+      }
+      ol.appendChild(li);
+    });
+    return ol;
+  }
+
   /* util baralho */
   function sorteia(usadas){
     let livres=BARALHO.map((_,i)=>i).filter(i=>!usadas.includes(i));
@@ -222,11 +242,7 @@ window.Perfil = (function(){
     const pistas=el("ol",{class:"pistas"});
     const btnProx=el("button",{class:"btn btn-linha larga"});
     function repinta(){
-      pistas.replaceChildren(...c.d.map((t,i)=>{
-        const aberta=i<=lg.dica;
-        return el("li",{class:"pista "+(aberta?"aberta":"trancada")+(i===lg.dica?" atual":"")},
-          el("span",{class:"v"},String(10-i)), el("span",{class:"t"}, t));
-      }));
+      pistas.replaceChildren(...montaPistas(c.d, lg.dica).childNodes);
       btnProx.textContent = lg.dica>=9?"Ninguém acertou, encerrar":"Próxima dica";
       valBox.textContent=String(10-lg.dica);
     }
@@ -565,13 +581,8 @@ window.Perfil = (function(){
     relBox=el("div",{class:"relogio"}); relTxt=el("span"); relBar=el("i");
     relBox.append(relTxt, el("span",{class:"bar"}, relBar));
 
-    // as 10 dicas aparecem SEMPRE: reveladas abertas, o resto com blur
-    const pistas=el("ol",{class:"pistas"});
-    c.d.forEach((t,i)=>{
-      const aberta=i<=estado.dica;
-      pistas.appendChild(el("li",{class:"pista "+(aberta?"aberta":"trancada")+(i===estado.dica?" atual":"")},
-        el("span",{class:"v"},String(10-i)), el("span",{class:"t"}, t)));
-    });
+    // as 10 dicas aparecem SEMPRE: a da vez aberta, as anteriores recolhidas, o resto com blur
+    const pistas=montaPistas(c.d, estado.dica);
 
     let papel;
     if(vez.solo){

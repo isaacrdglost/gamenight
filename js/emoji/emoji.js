@@ -10,7 +10,7 @@ window.EmojiJogo = (function(){
   let ctx, el, esc, raiz;
   let sala=null, estado=null, desinscrever=null;
   const eu=()=>ctx.perfil, Net=()=>window.Net;
-  const NOME="Emoji Enigma", EMOJI="🎬", ID="emoji", MIN=3, TEMPO=60;
+  const NOME="Emoji Enigma", EMOJI="🎬", ID="emoji", MIN=3, TEMPO=80;
 
   function tela(node){ raiz().replaceChildren(node); window.scrollTo({top:0}); }
   function cabec(titulo, extra){ return el("header",{class:"compacto"},

@@ -292,7 +292,24 @@ b.a{ color:var(--tva); } b.b{ color:var(--tvb); }
 .pista.atual .v{ background:var(--ouro); color:#4A3500; box-shadow:0 3px 0 var(--ouro-3d); }
 @keyframes entra{ from{ transform:scale(.97); opacity:.4; } }
 
-.controles{ display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
+/* pista recolhida: vira uma linha só, e volta a abrir com um toque */
+.pista.recolhida{ cursor:pointer; padding:7px 12px; }
+.pista.recolhida .t{
+  display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;
+  overflow:hidden; opacity:.6; font-size:14px;
+}
+.pista.recolhida .v{ width:32px; height:32px; font-size:15px; }
+.pista.recolhida:hover{ background:#F1EEFB; }
+.pista.recolhida::after{ content:"▾"; color:var(--suave); font-size:12px; margin-left:auto; }
+
+/* controles do Perfil ficam colados no rodapé da tela, sempre à mão */
+.controles{
+  display:flex; flex-direction:column; gap:8px;
+  position:sticky; bottom:0; z-index:20;
+  padding:10px 0 calc(10px + env(safe-area-inset-bottom));
+  margin-bottom:0;
+  background:linear-gradient(to bottom, transparent, var(--fundo) 22%);
+}
 
 /* ---------------- revelação / fim ---------------- */
 .revelacao,.fim{ text-align:center; padding:30px 20px; }
