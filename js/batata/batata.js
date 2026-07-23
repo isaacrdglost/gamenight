@@ -72,10 +72,11 @@ window.Batata = (function(){
       sala={code}; ctx.guardar(chaveSala(),{code}); ligar(); estado=novo; render(); return true;
     }catch(e){ if(!sil) alert("Não consegui entrar."); console.error(e); return false; }
   }
-  function ligar(){ if(desinscrever){ desinscrever(); desinscrever=null; } desinscrever=Net().inscrever(sala.code, st=>{ if(st){ estado=st; render(); } }); }
+  function ligar(){ if(desinscrever){ desinscrever(); desinscrever=null; } desinscrever=Net().inscrever(sala.code, st=>{ if(st){ estado=st; render(); } });
+    if(window.Chat) window.Chat.ligar({ mutar, eu, avatarPorId:ctx.avatarPorId, rapidas:["Deu branco total.","Quase! 😤","Tô sem ideia nenhuma."] }); }
   async function mutar(f){ try{ const n=await Net().alterar(sala.code,f); if(n){ estado=n; render(); } }catch(e){ console.error(e); } }
   function sairOnline(){
-    paraRel(); if(desinscrever){ desinscrever(); desinscrever=null; } ctx.guardar(chaveSala(),null);
+    paraRel(); if(window.Chat) window.Chat.desligar(); if(desinscrever){ desinscrever(); desinscrever=null; } ctx.guardar(chaveSala(),null);
     if(sala){ const code=sala.code; Net().alterar(code,s=>{
       if(s.players[eu().id]){ delete s.players[eu().id]; s.order=s.order.filter(i=>i!==eu().id); s.vivos=(s.vivos||[]).filter(i=>i!==eu().id); }
       if(s.host===eu().id && s.order.length) s.host=s.order[0];
@@ -84,7 +85,7 @@ window.Batata = (function(){
       return s; }).then(s=>{ if(s&&(!s.order||!s.order.length)) Net().apagarSala(code); }).catch(()=>{}); }
     sala=null; estado=null; menu();
   }
-  function sairTudo(){ paraRel(); if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
+  function sairTudo(){ paraRel(); if(window.Chat) window.Chat.desligar(); if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
 
   /* menu / lobby */
   function menu(){
@@ -261,6 +262,7 @@ window.Batata = (function(){
   let sigJogo=null;
   function render(){
     if(!estado) return;
+    if(window.Chat) window.Chat.novoEstado(estado);
     if(estado.phase==="jogo"){
       const sig=estado.round+"|"+estado.vezId+"|"+estado.respostas.length+"|"+estado.vivos.length;
       if(sig!==sigJogo){ sigJogo=sig; faseJogo(); }

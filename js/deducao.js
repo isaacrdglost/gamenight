@@ -64,12 +64,14 @@ window.Deducao = (function(){
   function ligarCanal(){
     if(desinscrever){ desinscrever(); desinscrever=null; }
     desinscrever=Net().inscrever(sala.code, st=>{ if(st){ estado=st; render(); } });
+    if(window.Chat) window.Chat.ligar({ mutar, eu, avatarPorId:ctx.avatarPorId, rapidas:def.rapidas||[] });
   }
   async function mutar(f){
     try{ const novo=await Net().alterar(sala.code, f); if(novo){ estado=novo; render(); } }
     catch(e){ console.error(e); }
   }
   function sairOnline(){
+    if(window.Chat) window.Chat.desligar();
     if(desinscrever){ desinscrever(); desinscrever=null; }
     ctx.guardar(chaveSala(), null);
     if(sala){
@@ -82,7 +84,7 @@ window.Deducao = (function(){
     }
     sala=null; estado=null; menu();
   }
-  function sairTudo(){ if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
+  function sairTudo(){ if(window.Chat) window.Chat.desligar(); if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
 
   /* ---------------- menu ---------------- */
   function menu(){
@@ -340,6 +342,7 @@ window.Deducao = (function(){
   /* ---------------- roteador ---------------- */
   function render(){
     if(!estado) return;
+    if(window.Chat) window.Chat.novoEstado(estado);
     if(estado.phase==="lobby") return lobby();
     if(estado.phase==="papel") return fasePapel();
     if(estado.phase==="votacao") return faseVotacao();

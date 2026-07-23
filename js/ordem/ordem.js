@@ -7,6 +7,7 @@ window.Ordem = (function(){
   const def = {
     id:"ordem", nome:"Põe na Ordem", emoji:"📊", min:2,
     metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:45, total:DECK.length,
+    rapidas:["Troquei tudo de lugar.","Essa ordem tá errada! 🤨","Acertei na sorte."],
     comoJogar:"Aparecem 5 itens embaralhados e um critério. Cada um monta a ordem no seu celular. Cada posição certa vale 1 ponto, e acertar as 5 vale 2 de bônus!",
 
     novaRodada(s){

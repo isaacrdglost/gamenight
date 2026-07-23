@@ -403,9 +403,11 @@ window.Perfil = (function(){
   function ligarCanal(){
     if(desinscrever){ desinscrever(); desinscrever=null; }
     desinscrever=Net().inscrever(sala.code, st=>{ if(st){ estado=st; renderOnline(); } });
+    if(window.Chat) window.Chat.ligar({ mutar, eu, avatarPorId:ctx.avatarPorId, rapidas:["Essa eu sei! 🔥","Passa a próxima dica.","Tá difícil, socorro."] });
   }
   function sairOnline(){
     paraRel();
+    if(window.Chat) window.Chat.desligar();
     if(desinscrever){ desinscrever(); desinscrever=null; }
     ctx.guardar("perfil:sala",null);
     if(sala){
@@ -435,6 +437,7 @@ window.Perfil = (function(){
 
   function renderOnline(){
     if(!estado) return;
+    if(window.Chat) window.Chat.novoEstado(estado);
     if(estado.phase==="lobby") return lobby();
     if(estado.phase==="card") return cartaOnline();
     if(estado.phase==="reveal") return revealOnline();

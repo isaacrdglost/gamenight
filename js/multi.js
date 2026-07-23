@@ -138,6 +138,7 @@ window.Multi = (function(){
   function ligarCanal(){
     if(desinscrever){ desinscrever(); desinscrever=null; }
     desinscrever=Net().inscrever(sala.code, st=>{ if(st){ estado=st; render(); } });
+    if(window.Chat) window.Chat.ligar({ mutar, eu, avatarPorId:ctx.avatarPorId, rapidas:def.rapidas||[] });
   }
   async function mutar(f){
     try{ const novo=await Net().alterar(sala.code, f); if(novo){ estado=novo; render(); } }
@@ -145,6 +146,7 @@ window.Multi = (function(){
   }
   function sairOnline(){
     paraRel();
+    if(window.Chat) window.Chat.desligar();
     if(solo){ // treino: só desliga a sala local e volta pro menu
       if(desinscrever){ desinscrever(); desinscrever=null; }
       if(Net().apagarSala) Net().apagarSala("SOLO");
@@ -163,7 +165,7 @@ window.Multi = (function(){
     }
     sala=null; estado=null; menu();
   }
-  function sairTudo(){ paraRel(); if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
+  function sairTudo(){ paraRel(); if(window.Chat) window.Chat.desligar(); if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
 
   /* ---------------- menu de entrada ---------------- */
   function botaoTreinar(){
@@ -413,6 +415,7 @@ window.Multi = (function(){
   let sigPergunta=null;
   function render(){
     if(!estado) return;
+    if(window.Chat) window.Chat.novoEstado(estado);
     if(estado.phase==="pergunta"){
       // enquanto respondo, só troco o rodapé (não redesenho minha resposta em andamento)
       const sig=estado.round+"|"+(jaRespondi()?"1":"0");

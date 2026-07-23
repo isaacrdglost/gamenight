@@ -89,7 +89,15 @@ window.FX = (function(){
       g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.3,st+.02); g.gain.exponentialRampToValueAtTime(.0001,st+(ultimo?.6:.18));
       o.connect(g); g.connect(a.destination); o.start(st); o.stop(st+.7); });
   }
-  const SONS = { airhorn, rimshot, trombone, ding, erro, pop, chime, fanfarra };
+  function msg(a){ // chat: bem curtinho, só pra sinalizar
+    const t=a.currentTime;
+    [740,1108].forEach((f,i)=>{
+      const o=a.createOscillator(),g=a.createGain(); o.type="sine"; o.frequency.value=f; const st=t+i*.055;
+      g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.16,st+.008); g.gain.exponentialRampToValueAtTime(.0001,st+.13);
+      o.connect(g); g.connect(a.destination); o.start(st); o.stop(st+.14);
+    });
+  }
+  const SONS = { airhorn, rimshot, trombone, ding, erro, pop, chime, fanfarra, msg };
   function toca(nome){ if(mudo) return; const a=ctx(); if(!a) return; try{ (SONS[nome]||(()=>{}))(a); }catch(e){} }
 
   /* -------- botõezinhos na lateral -------- */
