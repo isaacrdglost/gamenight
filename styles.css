@@ -468,6 +468,34 @@ footer{ text-align:center; color:var(--claro-2); font-size:13.5px; font-weight:7
 .cor-verdade{ color:var(--verde); }
 .cor-mito{ color:var(--tva); }
 
+/* alternativas do Quiz (A/B/C/D) */
+.alternativas{ display:flex; flex-direction:column; gap:10px; }
+.alt{
+  appearance:none; border:2.5px solid #E4E0F4; cursor:pointer; text-align:left;
+  background:#F7F5FE; color:var(--tinta); border-radius:16px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px; font-weight:800; font-size:15px;
+  transition:transform .08s, border-color .1s, background .1s;
+}
+.alt:hover{ transform:translateY(-2px); border-color:var(--azulzao); }
+.alt:active{ transform:translateY(1px); }
+.alt .letra{
+  flex:none; width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  font-family:'Fredoka',sans-serif; font-size:17px; color:#fff;
+  background:var(--azulzao); box-shadow:0 3px 0 var(--azulzao-3d);
+}
+
+/* cartão de papel secreto (Impostor / Espião) */
+.papel{
+  text-align:center; border-radius:var(--raio-b); padding:22px 16px;
+  background:linear-gradient(160deg,#EEFBF2,#DDF3E6); border:3px solid var(--verde);
+}
+.papel.alerta{ background:linear-gradient(160deg,#FFECEC,#FFDCDC); border-color:var(--tva); }
+.papel .eyebrow{ color:var(--verde-3d); }
+.papel.alerta .eyebrow{ color:var(--tva-3d); }
+.papel-titulo{ font-family:'Fredoka',sans-serif; font-size:34px; font-weight:600; margin:6px 0 4px; line-height:1.1; }
+.papel-sub{ color:var(--tinta); font-weight:700; font-size:14px; opacity:.85; }
+.res.alvo{ outline:2px solid var(--tva); }
+
 /* chips de quem já respondeu */
 .aguardando{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:12px 0; }
 .aguardando .chip{
