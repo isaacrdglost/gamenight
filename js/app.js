@@ -104,7 +104,7 @@ window.App = (function(){
     { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todos sabem o lugar secreto, menos um.", pronto:true, tags:["grupo"] },
     { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:true, tags:["dupla","grupo","individual"] },
     { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:true, tags:["grupo"] },
-    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:false, tags:["grupo"] }
+    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:true, tags:["dupla","grupo"] }
   ];
   const TAGS = { individual:{t:"Individual",e:"👤"}, dupla:{t:"Dupla",e:"👥"}, grupo:{t:"Grupo",e:"👨‍👩‍👧"} };
 
@@ -143,7 +143,7 @@ window.App = (function(){
     perfil: ()=>window.Perfil, palpite: ()=>window.Palpite,
     maisprovavel: ()=>window.MaisProvavel, verdademito: ()=>window.VerdadeMito,
     quiz: ()=>window.Quiz, impostor: ()=>window.Impostor, espiao: ()=>window.Espiao,
-    ordem: ()=>window.Ordem, emoji: ()=>window.EmojiJogo
+    ordem: ()=>window.Ordem, emoji: ()=>window.EmojiJogo, batata: ()=>window.Batata
   };
   function abrirJogo(id, joinCode){
     const mod = MODULOS[id] && MODULOS[id]();

@@ -493,6 +493,14 @@ footer{ text-align:center; color:var(--claro-2); font-size:13.5px; font-weight:7
   background:var(--azulzao); box-shadow:0 3px 0 var(--azulzao-3d);
 }
 
+/* Batata Quente: respostas ditas e eliminados */
+.respostas-ditas{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:8px 0; }
+.dita{
+  background:#F1EEFB; color:var(--tinta); font-weight:700; font-size:12.5px;
+  padding:4px 10px; border-radius:999px;
+}
+.aguardando .chip.morto{ opacity:.45; text-decoration:line-through; }
+
 /* Emoji Enigma: o enigma em emojis grandes */
 .enigma{
   text-align:center; font-size:44px; line-height:1.3; letter-spacing:.05em;
