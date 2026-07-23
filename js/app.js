@@ -64,8 +64,8 @@ window.App = (function(){
       if(!nk){ nome.focus(); return; }
       perfil = { nick:nk, avatar:escolhido, id: perfil?perfil.id:novoId() };
       await guardar("app:perfil", perfil);
-      // veio por link de convite? cai direto na sala
-      if(salaConvite) abrirJogo("perfil");
+      // veio por link de convite? cai direto na sala do jogo certo
+      if(salaConvite) roteiaConvite();
       else telaEstante();
     });
     nome.addEventListener("keydown",e=>{ if(e.key==="Enter") salvar.click(); });
@@ -94,25 +94,26 @@ window.App = (function(){
 
   /* ================= ESTANTE DE JOGOS ================= */
   const JOGOS = [
-    { id:"perfil", nome:"Perfil", emoji:"🕵️", desc:"Adivinhe a personalidade pelas dicas. Vermelho contra Azul, primeiro a fazer 50 pontos vence!", pronto:true },
-    { id:"palpite", nome:"Palpite", emoji:"🎯", desc:"Pergunta numérica, cada um chuta. O palpite mais próximo leva os pontos!", pronto:false },
-    { id:"impostor", nome:"Impostor", emoji:"🎭", desc:"Todo mundo recebe a mesma palavra, menos o impostor. Dê pistas sem se entregar!", pronto:false },
-    { id:"maisprovavel", nome:"Mais Provável", emoji:"👥", desc:"Quem do grupo é mais provável de...? Vote e pontue se acertar a escolha da galera!", pronto:false },
-    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Categoria na tela, 10 segundos pra responder sem repetir. Último vivo vence!", pronto:false },
-    { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todo mundo sabe o lugar secreto, menos um. Descubram quem é o espião!", pronto:false },
-    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme ou música só com emojis. Quem adivinhar primeiro pontua mais!", pronto:false },
-    { id:"verdademito", nome:"Verdade ou Mito", emoji:"🤔", desc:"Afirmação bizarra na tela, vote em 15 segundos. Sequência de acertos vale combo!", pronto:false },
-    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens do mais caro ao mais barato. Cada posição certa vale ponto!", pronto:false },
-    { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo primeiro pontua mais.", pronto:false }
+    { id:"perfil", nome:"Perfil", emoji:"🕵️", desc:"Adivinhe a personalidade pelas dicas. Vermelho contra Azul!", pronto:true },
+    { id:"palpite", nome:"Palpite", emoji:"🎯", desc:"Pergunta numérica, cada um chuta. O mais próximo pontua!", pronto:true },
+    { id:"maisprovavel", nome:"Mais Provável", emoji:"👥", desc:"Quem do grupo é mais provável de...? Vote na galera!", pronto:true },
+    { id:"verdademito", nome:"Verdade ou Mito", emoji:"🤔", desc:"Afirmação bizarra, vote em 15s. Combo por sequência!", pronto:true },
+    { id:"impostor", nome:"Impostor", emoji:"🎭", desc:"Todos recebem a mesma palavra, menos o impostor.", pronto:false },
+    { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:false },
+    { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todos sabem o lugar secreto, menos um.", pronto:false },
+    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:false },
+    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:false },
+    { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo pontua!", pronto:false }
   ];
 
   function telaEstante(){
     const a = avatarPorId(perfil.avatar);
-    const lista = el("div",{class:"jogos"});
+    const lista = el("div",{class:"galeria"});
     JOGOS.forEach(j=>{
-      const card = el("button",{class:"jogo"+(j.pronto?"":" soon"), type:"button"},
-        el("div",{class:"emoji"}, j.emoji),
-        el("div",{class:"info"}, el("h2",{},j.nome), el("p",{},j.desc)),
+      const card = el("button",{class:"jcard"+(j.pronto?"":" soon"), type:"button", title:j.desc},
+        el("div",{class:"jemoji"}, j.emoji),
+        el("h2",{}, j.nome),
+        el("p",{}, j.desc),
         el("span",{class:"selo"}, j.pronto?"Jogar":"Em breve")
       );
       if(j.pronto) card.addEventListener("click",()=>abrirJogo(j.id));
@@ -127,16 +128,33 @@ window.App = (function(){
         ),
         el("button",{class:"btn-ghost", onclick:()=>telaHome(false)},"Editar")
       ),
-      el("div",{}, el("div",{class:"eyebrow",style:"margin-bottom:2px"},"Seus jogos"), lista),
-      el("footer",{html:'Salão de Jogos · novos jogos entram na estante em breve.'})
+      el("div",{}, el("div",{class:"eyebrow",style:"margin-bottom:8px"},"Escolha um jogo"), lista),
+      el("footer",{html:'Salão de Jogos · mais jogos entram na galeria em breve.'})
     );
   }
 
-  function abrirJogo(id){
-    if(id==="perfil"){
-      const joinCode = salaConvite; salaConvite = null;
-      window.Perfil.abrir({ perfil, guardar, ler, voltar:telaEstante, el, esc, avatarPorId, joinCode });
-    }
+  // liga cada jogo ao seu módulo (mesmo contrato: abrir(ctx))
+  const MODULOS = {
+    perfil: ()=>window.Perfil, palpite: ()=>window.Palpite,
+    maisprovavel: ()=>window.MaisProvavel, verdademito: ()=>window.VerdadeMito
+  };
+  function abrirJogo(id, joinCode){
+    const mod = MODULOS[id] && MODULOS[id]();
+    if(!mod) return telaEstante();
+    mod.abrir({ perfil, guardar, ler, voltar:telaEstante, el, esc, avatarPorId, joinCode });
+  }
+
+  // convite por link: descobre qual jogo é a sala e abre o módulo certo
+  async function roteiaConvite(){
+    const code = salaConvite; salaConvite = null;
+    let gameId = "perfil";
+    try{
+      if(window.Net && window.Net.disponivel()){
+        const st = await window.Net.lerSala(code);
+        if(st && st.game && MODULOS[st.game]) gameId = st.game;
+      }
+    }catch(e){}
+    abrirJogo(gameId, code);
   }
 
   /* ================= BOOT ================= */
@@ -145,7 +163,7 @@ window.App = (function(){
     perfil = await ler("app:perfil");
     if(perfil && !perfil.id){ perfil.id = novoId(); await guardar("app:perfil", perfil); }
     if(perfil && perfil.nick){
-      if(salaConvite) abrirJogo("perfil");
+      if(salaConvite) roteiaConvite();
       else telaEstante();
     } else {
       telaHome(true);
