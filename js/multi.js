@@ -138,6 +138,18 @@ window.Multi = (function(){
     ));
   }
 
+  /* ---------------- faixa de esgotamento do baralho ---------------- */
+  // discreta, só cor: mostra quanto do baralho ainda resta nesta partida.
+  function barraEsgoto(){
+    const total=def.total||0;
+    if(!total) return el("div",{});
+    const usado=(estado.usadas?estado.usadas.length:0);
+    const resta=Math.max(0, Math.min(1, (total-usado)/total));
+    const cor = resta>0.5 ? "var(--verde)" : (resta>0.2 ? "var(--ouro)" : "var(--tva)");
+    return el("div",{class:"esgoto","aria-hidden":"true",title:"Baralho restante"},
+      el("i",{style:"width:"+(resta*100).toFixed(0)+"%;background:"+cor}));
+  }
+
   /* ---------------- placar ---------------- */
   function placarBar(){
     const js=jogadores().sort((a,b)=>b.score-a.score);
@@ -233,35 +245,33 @@ window.Multi = (function(){
     revelandoRodada=estado.round;
     mutar(s=>{ if(s.phase!=="pergunta") return s; def.pontua(s); s.reveal=s.reveal||{}; s.phase="reveal"; return s; });
   }
-  function fasePergunta(){
+  // rodapé (chips + botão do host) — atualizado à parte pra não redesenhar
+  // a área de resposta enquanto o jogador ainda está montando a dele.
+  function rodapePergunta(){
     const respondidos=estado.order.filter(id=>estado.answers[id]!=null).length;
     const total=estado.order.length;
-    const meio=def.renderPergunta(fazApi());
-
-    const chips=el("div",{class:"aguardando"}, ...jogadores().map(p=>
-      el("span",{class:"chip"+(estado.answers[p.id]!=null?" ok":"")}, avatarMini(p.avatar), p.nick)));
-
-    const controles=[];
+    const filhos=[el("div",{class:"aguardando"}, ...jogadores().map(p=>
+      el("span",{class:"chip"+(estado.answers[p.id]!=null?" ok":"")}, avatarMini(p.avatar), p.nick)))];
+    if(jaRespondi()) filhos.unshift(el("p",{class:"aviso"},"Resposta enviada! Faltam "+(total-respondidos)+"…"));
     if(souHost()){
       const rev=el("button",{class:"btn-ghost larga",style:"width:100%"},"Revelar agora ("+respondidos+"/"+total+")");
       rev.addEventListener("click", forcaRevelar);
-      controles.push(rev);
+      filhos.push(rev);
     }
-
+    filhos.push(el("div",{class:"acoes"}, el("button",{class:"btn-ghost",onclick:sairOnline},"Sair da sala")));
+    return el("div",{id:"rodape-pergunta"}, ...filhos);
+  }
+  function fasePergunta(){
+    const meio=def.renderPergunta(fazApi());
     tela(el("div",{},
+      barraEsgoto(),
       placarBar(),
       relogioNode(estado.prazo),
       el("div",{class:"card"},
         el("div",{class:"eyebrow"},"Rodada "+estado.round+" de "+estado.meta),
         meio),
-      jaRespondi()?el("p",{class:"aviso"},"Resposta enviada! Faltam "+(total-respondidos)+"…"):"",
-      chips,
-      ...controles,
-      el("div",{class:"acoes"}, el("button",{class:"btn-ghost",onclick:sairOnline},"Sair da sala"))
+      rodapePergunta()
     ));
-
-    // host revela sozinho quando todos responderam
-    if(souHost() && estado.order.every(id=>estado.answers[id]!=null)) forcaRevelar();
   }
 
   /* ---------------- rodada: resultado ---------------- */
@@ -327,10 +337,19 @@ window.Multi = (function(){
   }
 
   /* ---------------- roteador ---------------- */
+  let sigPergunta=null;
   function render(){
     if(!estado) return;
+    if(estado.phase==="pergunta"){
+      // enquanto respondo, só troco o rodapé (não redesenho minha resposta em andamento)
+      const sig=estado.round+"|"+(jaRespondi()?"1":"0");
+      if(sig!==sigPergunta){ sigPergunta=sig; fasePergunta(); }
+      else { const r=document.getElementById("rodape-pergunta"); if(r) r.replaceWith(rodapePergunta()); }
+      if(souHost() && estado.order.every(id=>estado.answers[id]!=null)) forcaRevelar();
+      return;
+    }
+    sigPergunta=null;
     if(estado.phase==="lobby") return lobby();
-    if(estado.phase==="pergunta") return fasePergunta();
     if(estado.phase==="reveal") return faseReveal();
     if(estado.phase==="over") return faseOver();
   }

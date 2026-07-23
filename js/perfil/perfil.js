@@ -521,6 +521,16 @@ window.Perfil = (function(){
     ));
   }
 
+  // faixa discreta de esgotamento do baralho (só cor, sem número)
+  function barraEsgotoPerfil(){
+    const total=BARALHO.length||0;
+    if(!total) return el("div",{});
+    const usado=(estado && estado.used ? estado.used.length : 0);
+    const resta=Math.max(0, Math.min(1, (total-usado)/total));
+    const cor = resta>0.5 ? "var(--verde)" : (resta>0.2 ? "var(--ouro)" : "var(--tva)");
+    return el("div",{class:"esgoto","aria-hidden":"true",title:"Baralho restante"},
+      el("i",{style:"width:"+(resta*100).toFixed(0)+"%;background:"+cor}));
+  }
   function placarTimes(){
     return el("div",{class:"placarfixo"},
       el("div",{class:"pl a"+(estado.turn==="A"?" vez":"")}, el("div",{class:"q"},"Vermelho"+(estado.turn==="A"?" · adivinha":"")), el("div",{class:"v"}, String(estado.scores.A))),
@@ -592,6 +602,7 @@ window.Perfil = (function(){
     }
 
     tela(el("div",{},
+      barraEsgotoPerfil(),
       placarTimes(),
       el("div",{class:"carta"+(novaCarta?" nova":"")},
         el("div",{class:"carta-topo"},

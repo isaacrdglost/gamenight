@@ -6,7 +6,7 @@ window.Espiao = (function(){
 
   const def = {
     id:"espiao", nome:"O Espião", emoji:"🕶️", min:3,
-    metaPadrao:5, metaMin:3, metaMax:12,
+    metaPadrao:5, metaMin:3, metaMax:12, total:24,
     textoAlvo:"espião", papelCaption:"Local secreto",
     comoJogar:"Todo mundo recebe o mesmo local, menos o espião, que não sabe onde é. Façam perguntas uns aos outros sobre o local sem entregar de graça. O espião tenta se passar por quem sabe. No fim, votem em quem é o espião!",
 

@@ -106,6 +106,17 @@ window.Deducao = (function(){
       el("footer",{},"Melhor com a galera conversando por voz!")));
   }
 
+  /* ---------------- faixa de esgotamento do baralho ---------------- */
+  function barraEsgoto(){
+    const total=def.total||0;
+    if(!total) return el("div",{});
+    const usado=(estado.usadas?estado.usadas.length:0);
+    const resta=Math.max(0, Math.min(1, (total-usado)/total));
+    const cor = resta>0.5 ? "var(--verde)" : (resta>0.2 ? "var(--ouro)" : "var(--tva)");
+    return el("div",{class:"esgoto","aria-hidden":"true",title:"Baralho restante"},
+      el("i",{style:"width:"+(resta*100).toFixed(0)+"%;background:"+cor}));
+  }
+
   /* ---------------- placar ---------------- */
   function placarLista(){
     const js=jogadores().sort((a,b)=>b.score-a.score);
@@ -184,6 +195,7 @@ window.Deducao = (function(){
     const chips=el("div",{class:"aguardando"}, ...jogadores().map(p=>
       el("span",{class:"chip"+(estado.prontos[p.id]?" ok":"")}, avatarMini(p.avatar), p.nick)));
     tela(el("div",{},
+      barraEsgoto(),
       el("div",{class:"eyebrow",style:"text-align:center;color:var(--claro-2)"},"Rodada "+estado.round+" de "+estado.meta),
       el("div",{class:"card"}, cartao,
         el("p",{class:"hint",style:"text-align:center;margin-top:14px"},"Guarde pra você! Quando todo mundo estiver pronto, conversem em voz alta e tentem achar o "+def.textoAlvo+"."),

@@ -6,7 +6,7 @@ window.Palpite = (function(){
 
   const def = {
     id:"palpite", nome:"Palpite", emoji:"🎯", min:2,
-    metaLabel:"rodadas", metaPadrao:8, metaMin:3, metaMax:15, tempoResposta:30,
+    metaLabel:"rodadas", metaPadrao:8, metaMin:3, metaMax:15, tempoResposta:30, total:26,
     comoJogar:"Aparece uma pergunta com resposta em número. Cada um chuta um valor no seu celular. O palpite mais perto leva 3 pontos, e quem crava na mosca leva 5!",
 
     novaRodada(s){ const i=sorteia(s.usadas, DECK.length); s.usadas.push(i); s.dados={i}; },

@@ -160,6 +160,7 @@ window.App = (function(){
 
   /* ================= BOOT ================= */
   async function iniciar(){
+    if(window.FX && window.FX.montar) window.FX.montar();
     leConvite();
     perfil = await ler("app:perfil");
     if(perfil && !perfil.id){ perfil.id = novoId(); await guardar("app:perfil", perfil); }

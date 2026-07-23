@@ -553,10 +553,61 @@ footer{ text-align:center; color:var(--claro-2); font-size:13.5px; font-weight:7
 .fim h2.venc-a{ color:var(--tva); }
 .fim h2.venc-b{ color:var(--tvb); }
 
-/* ---------------- desktop ---------------- */
+/* ---------------- faixa de esgotamento do baralho (só cor) ---------------- */
+.esgoto{
+  height:6px; border-radius:999px; background:rgba(255,255,255,.12);
+  overflow:hidden; margin:0 auto 12px; max-width:520px;
+}
+.esgoto i{ display:block; height:100%; border-radius:999px; transition:width .4s ease, background .4s ease; }
+
+/* ---------------- soundboard (efeitos na lateral) ---------------- */
+.soundboard{
+  position:fixed; right:8px; top:50%; transform:translateY(-50%); z-index:70;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.sfx-toggle{
+  appearance:none; border:0; cursor:pointer; width:44px; height:44px; border-radius:50%;
+  font-size:20px; background:var(--ouro); color:#4A3500; box-shadow:0 4px 0 var(--ouro-3d);
+}
+.sfx-toggle:active{ transform:translateY(2px); box-shadow:0 2px 0 var(--ouro-3d); }
+.sfx-grupo{ display:none; flex-direction:column; gap:8px; }
+.soundboard.aberto .sfx-grupo{ display:flex; animation:sfx-abre .2s ease; }
+@keyframes sfx-abre{ from{ opacity:0; transform:translateX(10px); } }
+.sfx{
+  appearance:none; border:0; cursor:pointer; width:44px; height:44px; border-radius:50%;
+  font-size:20px; background:#fff; box-shadow:0 4px 0 rgba(0,0,0,.28);
+  transition:transform .08s;
+}
+.sfx:hover{ transform:scale(1.08); }
+.sfx:active{ transform:translateY(2px) scale(1); box-shadow:0 1px 0 rgba(0,0,0,.28); }
+
+/* ---------------- desktop: janela centralizada, galeria horizontal ---------------- */
 @media (min-width:720px){
-  .wrap{ max-width:600px; }
+  body{ padding-top:24px; padding-bottom:24px; }
+  .wrap{
+    max-width:880px;
+    background:rgba(0,0,0,.14); border:1px solid rgba(255,255,255,.08);
+    border-radius:28px; padding:26px 34px 34px;
+  }
   h1{ font-size:44px; }
+
+  /* galeria de jogos ocupa a largura toda, em 4 colunas */
+  .galeria{ grid-template-columns:repeat(4,1fr); gap:14px; }
+
+  /* telas de jogo: coluna central mais estreita dentro da janela larga */
+  .card, .carta, .placarfixo, .placar-chips, .placar-lista, .relogio, .esgoto,
+  .controles, .barra, .aguardando, .revelacao, .fim, .banner-vez,
+  header.compacto, footer{
+    max-width:600px; margin-left:auto; margin-right:auto;
+  }
+  .btn, .btn-linha, .btn-mint{ max-width:600px; margin-left:auto; margin-right:auto; }
+  .esgoto{ max-width:600px; }
+
+  .soundboard{ right:16px; }
+}
+@media (min-width:1000px){
+  .wrap{ max-width:960px; }
+  .galeria{ grid-template-columns:repeat(5,1fr); }
 }
 
 /* ---------------- acessibilidade ---------------- */

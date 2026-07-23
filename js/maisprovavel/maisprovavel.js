@@ -20,7 +20,7 @@ window.MaisProvavel = (function(){
 
   const def = {
     id:"maisprovavel", nome:"Mais Provável", emoji:"👥", min:3,
-    metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:25,
+    metaLabel:"rodadas", metaPadrao:8, metaMin:4, metaMax:15, tempoResposta:25, total:40,
     comoJogar:"Aparece um 'quem é mais provável de...?'. Cada um vota numa pessoa da sala. Quem votar na pessoa mais escolhida pela galera ganha 2 pontos!",
 
     novaRodada(s){ const i=sorteia(s.usadas, PROMPTS.length); s.usadas.push(i); s.dados={i}; },
