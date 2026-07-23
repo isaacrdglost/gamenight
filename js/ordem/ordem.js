@@ -16,6 +16,14 @@ window.Ordem = (function(){
       s.dados={ i, ord };
     },
 
+    // robô do treino solo: quase acerta, troca 1 ou 2 pares de lugar
+    botResponde(){
+      const a=[0,1,2,3,4];
+      const trocas=1+Math.floor(Math.random()*2);
+      for(let k=0;k<trocas;k++){ const i=Math.floor(Math.random()*5), j=Math.floor(Math.random()*5); const t=a[i]; a[i]=a[j]; a[j]=t; }
+      return a;
+    },
+
     renderPergunta(api){
       const s=api.s, q=DECK[s.dados.i], disp=s.dados.ord;
       const wrap=api.el("div",{});

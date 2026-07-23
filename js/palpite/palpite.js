@@ -11,6 +11,9 @@ window.Palpite = (function(){
 
     novaRodada(s){ const i=sorteia(s.usadas, DECK.length); s.usadas.push(i); s.dados={i}; },
 
+    // robô do treino solo: chuta perto da resposta, com erro de até 25%
+    botResponde(s){ const c=DECK[s.dados.i].a; const err=(Math.random()*0.5-0.25); return Math.max(0, Math.round(c*(1+err))); },
+
     renderPergunta(api){
       const q=DECK[api.s.dados.i];
       const wrap=api.el("div",{});

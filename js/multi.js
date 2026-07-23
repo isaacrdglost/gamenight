@@ -18,7 +18,56 @@ window.Multi = (function(){
   let ctx, el, esc, raiz, def;
   let sala=null, estado=null, desinscrever=null;
   const eu = () => ctx.perfil;
-  const Net = () => window.Net;
+
+  /* TREINO SOLO: uma "rede" local em memória + robôs que respondem.
+     O motor roda igualzinho, só que sem internet e com bots na sala. */
+  let netAtual=null, solo=false;
+  const Net = () => netAtual || window.Net;
+  const BOTS=[{id:"bot-1",nick:"Robô Bip",avatar:"jaca"},{id:"bot-2",nick:"Robô Bop",avatar:"ted"}];
+  function localNet(){
+    let room=null, cbs=[];
+    const clone=o=>JSON.parse(JSON.stringify(o));
+    return {
+      disponivel:()=>true,
+      criarSala:async(_c,st)=>{ room=clone(st); return st; },
+      lerSala:async()=>room?clone(room):null,
+      escreverSala:async()=>{},
+      alterar:async(_c,f)=>{ if(!room) throw new Error("sala-sumiu");
+        const novo=f(clone(room)); if(!novo) return clone(room);
+        room=novo; const snap=clone(room);
+        setTimeout(()=>cbs.forEach(cb=>cb(snap)),0);
+        return clone(novo); },
+      apagarSala:async()=>{ room=null; },
+      inscrever:(_c,cb)=>{ cbs.push(cb); return ()=>{ cbs=cbs.filter(x=>x!==cb); }; }
+    };
+  }
+  async function treinoSolo(){
+    netAtual=localNet(); solo=true; botsRodada=-1;
+    const st={
+      game:def.id, host:eu().id, phase:"lobby", meta:def.metaPadrao,
+      players:{ [eu().id]:{nick:eu().nick, avatar:eu().avatar, score:0, streak:0} },
+      order:[eu().id], round:0, usadas:[], answers:{}, dados:null, reveal:null, prazo:null
+    };
+    BOTS.forEach(b=>{ st.players[b.id]={nick:b.nick, avatar:b.avatar, score:0, streak:0}; st.order.push(b.id); });
+    await Net().criarSala("SOLO", st);
+    sala={code:"SOLO"}; ligarCanal(); estado=st; render();
+  }
+  let botsRodada=-1;
+  function agendaBots(){
+    if(!solo || !def.botResponde || botsRodada===estado.round) return;
+    botsRodada=estado.round;
+    const tempo=(def.tempoResposta||30)*1000;
+    const rodada=estado.round;
+    BOTS.forEach(b=>{
+      if(!estado.players[b.id]) return;
+      const delay = window.SOLO_BOT_RAPIDO ? (100+Math.random()*200) : (900+Math.random()*tempo*0.45);
+      setTimeout(()=>{
+        if(!solo || !estado || estado.phase!=="pergunta" || estado.round!==rodada) return;
+        mutar(s=>{ if(s.phase!=="pergunta"||s.round!==rodada) return s;
+          if(s.answers[b.id]==null) s.answers[b.id]=def.botResponde(s); return s; });
+      }, delay);
+    });
+  }
 
   function tela(node){ raiz().replaceChildren(node); window.scrollTo({top:0}); }
   function cabec(titulo, extra){
@@ -96,6 +145,12 @@ window.Multi = (function(){
   }
   function sairOnline(){
     paraRel();
+    if(solo){ // treino: só desliga a sala local e volta pro menu
+      if(desinscrever){ desinscrever(); desinscrever=null; }
+      if(Net().apagarSala) Net().apagarSala("SOLO");
+      netAtual=null; solo=false; botsRodada=-1; sala=null; estado=null;
+      return menu();
+    }
     if(desinscrever){ desinscrever(); desinscrever=null; }
     ctx.guardar(chaveSala(), null);
     if(sala){
@@ -111,12 +166,22 @@ window.Multi = (function(){
   function sairTudo(){ paraRel(); if(desinscrever){ desinscrever(); desinscrever=null; } sala=null; estado=null; ctx.voltar(); }
 
   /* ---------------- menu de entrada ---------------- */
+  function botaoTreinar(){
+    if(!def.botResponde) return null;
+    const b=el("button",{class:"btn-ghost larga",style:"width:100%;margin-top:14px"},"🤖 Treinar sozinho (contra robôs)");
+    b.addEventListener("click", treinoSolo);
+    return b;
+  }
   function menu(){
-    const online = Net() && Net().disponivel();
+    const online = window.Net && window.Net.disponivel();
+    netAtual=null; solo=false;
+    const treinar=botaoTreinar();
     if(!online){
       return tela(el("div",{},
         cabec(def.nome),
-        el("div",{class:"card"}, el("p",{class:"hint"},"Esse jogo é online. Configure o Supabase (config.js) para liberar.")),
+        el("div",{class:"card"},
+          el("p",{class:"hint"},"O modo com amigos é online (precisa do Supabase no config.js)."),
+          treinar||""),
         el("footer",{}, def.comoJogar)
       ));
     }
@@ -135,7 +200,8 @@ window.Multi = (function(){
         criar,
         el("div",{style:"height:16px"}),
         el("label",{class:"rot"},"Já tem um código?"),
-        el("div",{class:"campo"}, codeInput, entrar)
+        el("div",{class:"campo"}, codeInput, entrar),
+        treinar||""
       ),
       el("footer",{},"Chame a galera, todo mundo joga junto!")
     ));
@@ -266,6 +332,7 @@ window.Multi = (function(){
   }
   function fasePergunta(){
     som("pop","p"+estado.round);
+    agendaBots();
     const meio=def.renderPergunta(fazApi());
     tela(el("div",{},
       barraEsgoto(),

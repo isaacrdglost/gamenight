@@ -11,6 +11,9 @@ window.VerdadeMito = (function(){
 
     novaRodada(s){ const i=sorteia(s.usadas, DECK.length); s.usadas.push(i); s.dados={i}; },
 
+    // robô do treino solo: acerta ~65% das vezes
+    botResponde(s){ const c=DECK[s.dados.i].v; return Math.random()<0.65 ? c : !c; },
+
     renderPergunta(api){
       const c=DECK[api.s.dados.i];
       const wrap=api.el("div",{});

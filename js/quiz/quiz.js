@@ -12,6 +12,13 @@ window.Quiz = (function(){
 
     novaRodada(s){ const i=sorteia(s.usadas, DECK.length); s.usadas.push(i); s.dados={i, t0:Date.now()}; },
 
+    // robô do treino solo: acerta ~60% das vezes
+    botResponde(s){
+      const c=DECK[s.dados.i].c;
+      const o=Math.random()<0.6 ? c : [0,1,2,3].filter(x=>x!==c)[Math.floor(Math.random()*3)];
+      return { o, t:Date.now() };
+    },
+
     renderPergunta(api){
       const s=api.s, q=DECK[s.dados.i];
       const wrap=api.el("div",{});
