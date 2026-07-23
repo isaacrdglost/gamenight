@@ -101,9 +101,9 @@ window.App = (function(){
     { id:"quiz", nome:"Quiz Relâmpago", emoji:"⚡", desc:"Perguntas rápidas, quem responde certo e rápido pontua!", pronto:true },
     { id:"impostor", nome:"Impostor", emoji:"🎭", desc:"Todos recebem a mesma palavra, menos o impostor.", pronto:true },
     { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todos sabem o lugar secreto, menos um.", pronto:true },
+    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:true },
     { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:false },
-    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:false },
-    { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:false }
+    { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:false }
   ];
 
   function telaEstante(){
@@ -137,7 +137,8 @@ window.App = (function(){
   const MODULOS = {
     perfil: ()=>window.Perfil, palpite: ()=>window.Palpite,
     maisprovavel: ()=>window.MaisProvavel, verdademito: ()=>window.VerdadeMito,
-    quiz: ()=>window.Quiz, impostor: ()=>window.Impostor, espiao: ()=>window.Espiao
+    quiz: ()=>window.Quiz, impostor: ()=>window.Impostor, espiao: ()=>window.Espiao,
+    ordem: ()=>window.Ordem
   };
   function abrirJogo(id, joinCode){
     const mod = MODULOS[id] && MODULOS[id]();

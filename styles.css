@@ -484,6 +484,33 @@ footer{ text-align:center; color:var(--claro-2); font-size:13.5px; font-weight:7
   background:var(--azulzao); box-shadow:0 3px 0 var(--azulzao-3d);
 }
 
+/* Põe na Ordem: montar a sequência */
+.ordem-escolhida{ display:flex; flex-direction:column; gap:7px; }
+.ordem-item{
+  appearance:none; border:2.5px solid #E4E0F4; cursor:pointer; text-align:left; width:100%;
+  display:flex; align-items:center; gap:12px; background:#fff; color:var(--tinta);
+  border-radius:14px; padding:11px 14px; font-weight:800; font-size:15px;
+}
+.ordem-item .num{
+  flex:none; width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  font-family:'Fredoka',sans-serif; font-size:15px; color:#fff;
+  background:var(--azulzao); box-shadow:0 3px 0 var(--azulzao-3d);
+}
+.ordem-item.vazio{ background:#F7F5FE; border-style:dashed; color:#B4ACD4; cursor:default; }
+.ordem-item.vazio .num{ background:#C9C3E2; box-shadow:0 3px 0 #A79ECB; }
+.ordem-item.vazio .ph{ font-weight:700; font-size:13px; }
+.ordem-item.certa{ border-color:var(--verde); background:#EAF9F0; }
+.ordem-item.certa .num{ background:var(--verde); box-shadow:0 3px 0 var(--verde-3d); }
+.ordem-pool{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.pool-item{
+  appearance:none; border:0; cursor:pointer; background:var(--ouro); color:#4A3500;
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:15px;
+  padding:10px 16px; border-radius:14px; box-shadow:0 4px 0 var(--ouro-3d);
+  transition:transform .08s;
+}
+.pool-item:hover{ transform:translateY(-2px); }
+.pool-item:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--ouro-3d); }
+
 /* cartão de papel secreto (Impostor / Espião) */
 .papel{
   text-align:center; border-radius:var(--raio-b); padding:22px 16px;
