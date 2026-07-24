@@ -104,6 +104,9 @@ window.App = (function(){
     { id:"espiao", nome:"O Espião", emoji:"🕶️", desc:"Todos sabem o lugar secreto, menos um.", pronto:true, tags:["grupo"] },
     { id:"ordem", nome:"Põe na Ordem", emoji:"📊", desc:"Ordene os 5 itens. Cada posição certa vale ponto!", pronto:true, tags:["dupla","grupo","individual"] },
     { id:"emoji", nome:"Emoji Enigma", emoji:"🎬", desc:"Monte um filme só com emojis. Adivinhem!", pronto:true, tags:["grupo"] },
+    { id:"quem", nome:"Quem Escreveu?", emoji:"🎣", desc:"Invente uma resposta falsa e engane a galera!", pronto:true, tags:["grupo"], pegadinha:true },
+    { id:"diferente", nome:"A Pergunta Diferente", emoji:"🙃", desc:"Um recebeu outra pergunta. Descubram quem!", pronto:true, tags:["grupo"], pegadinha:true },
+    { id:"duasverdades", nome:"2 Verdades 1 Mentira", emoji:"🤥", desc:"Duas verdades e uma mentira. Achem a mentira!", pronto:true, tags:["grupo"], pegadinha:true },
     { id:"batata", nome:"Batata Quente", emoji:"🥔", desc:"Responda em 10s sem repetir. Último vivo vence!", pronto:true, tags:["dupla","grupo"] }
   ];
   const TAGS = { individual:{t:"Individual",e:"👤"}, dupla:{t:"Dupla",e:"👥"}, grupo:{t:"Grupo",e:"👨‍👩‍👧"} };
@@ -114,6 +117,7 @@ window.App = (function(){
     JOGOS.forEach(j=>{
       const badges = el("div",{class:"tags"}, ...(j.tags||[]).map(k=>
         el("span",{class:"tag tag-"+k, title:TAGS[k].t}, TAGS[k].e+" "+TAGS[k].t)));
+      if(j.pegadinha) badges.insertBefore(el("span",{class:"tag tag-pegadinha",title:"Jogo de pegadinha"},"😈 Pegadinha"), badges.firstChild);
       const card = el("button",{class:"jcard"+(j.pronto?"":" soon"), type:"button", title:j.desc},
         el("div",{class:"jemoji"}, j.emoji),
         el("h2",{}, j.nome),
@@ -143,7 +147,8 @@ window.App = (function(){
     perfil: ()=>window.Perfil, palpite: ()=>window.Palpite,
     maisprovavel: ()=>window.MaisProvavel, verdademito: ()=>window.VerdadeMito,
     quiz: ()=>window.Quiz, impostor: ()=>window.Impostor, espiao: ()=>window.Espiao,
-    ordem: ()=>window.Ordem, emoji: ()=>window.EmojiJogo, batata: ()=>window.Batata
+    ordem: ()=>window.Ordem, emoji: ()=>window.EmojiJogo, batata: ()=>window.Batata,
+    quem: ()=>window.QuemEscreveu, diferente: ()=>window.Diferente, duasverdades: ()=>window.DuasVerdades
   };
   function abrirJogo(id, joinCode){
     const mod = MODULOS[id] && MODULOS[id]();
