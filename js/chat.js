@@ -13,8 +13,12 @@ window.Chat = (function(){
   const MAX_LEN  = 140;
   const EMOJIS = ["😂","🔥","❤️","👏","😱","🤔","💀","🎉"];
 
+  const VOL_ECO = 0.5;          // quem NÃO apertou ouve pela metade
+  const ESPERA_SFX = 700;       // trava anti-spam do soundboard
+
   let cfg=null, estado=null, montado=false, aberto=false;
   let vistos=0, ultimoTotal=0;
+  let ultimoSfx=null, sfxPronto=false, ultimoEnvio=0;
   let caixa, painel, botao, badge, listaEl, inputEl;
 
   function el(tag, attrs, ...kids){
@@ -121,9 +125,31 @@ window.Chat = (function(){
     rolaFim();
   }
 
+  /* -------- efeitos sonoros da sala (soundboard global) --------
+     Quem aperta ouve no volume normal e manda o efeito pra sala; todo
+     mundo que está na sala ouve o eco pela metade do volume. */
+  function emitirSfx(nome){
+    if(!cfg || !cfg.mutar) return;
+    const agora=Date.now();
+    if(agora-ultimoEnvio < ESPERA_SFX) return;   // segura o dedão pesado
+    ultimoEnvio=agora;
+    const meu=cfg.eu();
+    cfg.mutar(s=>{ s.sfx={ id:meu.id, n:nome, t:agora }; return s; });
+  }
+  function ouveSfx(){
+    const sfx = estado && estado.sfx;
+    if(!sfx){ sfxPronto=true; return; }
+    if(!sfxPronto){ ultimoSfx=sfx.t; sfxPronto=true; return; }  // ao entrar, ignora o que já passou
+    if(sfx.t===ultimoSfx) return;
+    ultimoSfx=sfx.t;
+    if(sfx.id===cfg.eu().id) return;                            // quem apertou já ouviu
+    if(window.FX && window.FX.toca) window.FX.toca(sfx.n, VOL_ECO);
+  }
+
   function novoEstado(st){
     if(!cfg) return;
     estado=st;
+    ouveSfx();
     const total=msgs().length;
     if(total>ultimoTotal){
       const novas=msgs().slice(ultimoTotal);
@@ -138,6 +164,7 @@ window.Chat = (function(){
 
   function ligar(c){
     cfg=c; estado=null; aberto=false; vistos=0; ultimoTotal=0;
+    ultimoSfx=null; sfxPronto=false; ultimoEnvio=0;
     montarDOM();
     pintaRapidas();
     painel.hidden=true; caixa.classList.remove("aberto");
@@ -145,9 +172,9 @@ window.Chat = (function(){
     atualizaBadge(); pintaLista();
   }
   function desligar(){
-    cfg=null; estado=null; aberto=false;
+    cfg=null; estado=null; aberto=false; sfxPronto=false; ultimoSfx=null;
     if(caixa){ caixa.hidden=true; painel.hidden=true; caixa.classList.remove("aberto"); }
   }
 
-  return { ligar, desligar, novoEstado, enviar, _abre:alterna };
+  return { ligar, desligar, novoEstado, enviar, emitirSfx, _abre:alterna };
 })();
